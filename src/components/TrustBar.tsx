@@ -9,7 +9,7 @@ const items = [
 export const TrustBar = () => {
   return (
     <section className="bg-gradient-soft border-y border-border">
-      <div className="container py-10 grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="container py-10 grid grid-cols-1 md:grid-cols-3 gap-6">
         {items.map((i) => (
           <div key={i.title} className="flex items-start gap-3">
             <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground shadow-glow">
