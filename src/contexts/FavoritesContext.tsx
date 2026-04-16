@@ -1,6 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, ReactNode } from "react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { haptic } from "@/lib/haptic";
 
 type FavoritesContextType = {
   ids: string[];
@@ -31,9 +33,13 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
     }
     if (ids.includes(bikeId)) {
       setIds((prev) => prev.filter((x) => x !== bikeId));
+      haptic("light");
+      toast("Verwijderd uit favorieten");
       await supabase.from("favorites").delete().eq("user_id", user.id).eq("bike_id", bikeId);
     } else {
       setIds((prev) => [...prev, bikeId]);
+      haptic("success");
+      toast.success("Toegevoegd aan favorieten");
       await supabase.from("favorites").insert({ user_id: user.id, bike_id: bikeId });
     }
   }, [user, ids]);

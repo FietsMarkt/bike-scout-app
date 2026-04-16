@@ -7,7 +7,8 @@ import { useFavorites } from "@/contexts/FavoritesContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { getOrCreateConversation } from "@/lib/chat";
-import { getOptimizedImage } from "@/lib/image";
+import { PhotoGallery } from "@/components/PhotoGallery";
+import { haptic } from "@/lib/haptic";
 
 const fmt = new Intl.NumberFormat("nl-BE");
 
@@ -26,7 +27,6 @@ export const AppBikeDetail = () => {
   const raw = res?.raw;
   const sellerId = raw?.user_id as string | undefined;
   const { data: seller } = useSellerProfile(sellerId);
-  const [active, setActive] = useState(0);
   const [contacting, setContacting] = useState(false);
 
   useEffect(() => { if (bike) document.title = `${bike.title} | FietsMarkt`; }, [bike]);
@@ -60,6 +60,7 @@ export const AppBikeDetail = () => {
   };
 
   const startChat = async () => {
+    haptic("medium");
     if (!user) { nav("/inloggen"); return; }
     if (!sellerId) return;
     if (sellerId === user.id) { toast({ title: "Dit is je eigen advertentie" }); return; }
@@ -73,73 +74,43 @@ export const AppBikeDetail = () => {
 
   return (
     <div className="-mt-12 pb-24">
-      {/* Full-bleed image carousel */}
-      <div className="relative bg-muted">
-        <div
-          className="flex overflow-x-auto snap-x snap-mandatory scrollbar-none"
-          onScroll={(e) => {
-            const el = e.currentTarget;
-            const idx = Math.round(el.scrollLeft / el.clientWidth);
-            if (idx !== active) setActive(idx);
-          }}
-        >
-          {images.map((src, i) => (
-            <img
-              key={i}
-              src={getOptimizedImage(src, 1200, 80)}
-              alt={`${bike.title} ${i + 1}`}
-              className="w-full aspect-[4/3] object-cover snap-start shrink-0"
-              style={{ paddingTop: i === 0 ? "env(safe-area-inset-top)" : undefined }}
-            />
-          ))}
-        </div>
+      {/* Full-bleed swipeable photo gallery + lightbox */}
+      <div className="relative">
+        <PhotoGallery images={images} alt={bike.title} topInset />
 
         {/* Floating top bar */}
         <div
-          className="absolute inset-x-0 top-0 flex items-center justify-between p-3"
+          className="absolute inset-x-0 top-0 flex items-center justify-between p-3 z-10"
           style={{ paddingTop: "calc(env(safe-area-inset-top) + 0.75rem)" }}
         >
           <button
             onClick={() => {
+              haptic("light");
               if (window.history.length > 1) nav(-1);
               else nav("/");
             }}
             aria-label="Terug"
-            className="grid h-10 w-10 place-items-center rounded-full bg-card/90 backdrop-blur shadow-md"
+            className="grid h-10 w-10 place-items-center rounded-full bg-card/90 backdrop-blur shadow-md active:scale-95 transition-transform"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
           <div className="flex gap-2">
             <button
-              onClick={onShare}
+              onClick={() => { haptic("light"); onShare(); }}
               aria-label="Delen"
-              className="grid h-10 w-10 place-items-center rounded-full bg-card/90 backdrop-blur shadow-md"
+              className="grid h-10 w-10 place-items-center rounded-full bg-card/90 backdrop-blur shadow-md active:scale-95 transition-transform"
             >
               <Share2 className="h-4 w-4" />
             </button>
             <button
               onClick={() => fav.toggle(bike.id)}
               aria-label={isFav ? "Verwijder favoriet" : "Bewaar"}
-              className="grid h-10 w-10 place-items-center rounded-full bg-card/90 backdrop-blur shadow-md"
+              className="grid h-10 w-10 place-items-center rounded-full bg-card/90 backdrop-blur shadow-md active:scale-95 transition-transform"
             >
               <Heart className={`h-4 w-4 ${isFav ? "fill-primary text-primary" : ""}`} />
             </button>
           </div>
         </div>
-
-        {/* Dots */}
-        {images.length > 1 && (
-          <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
-            {images.map((_, i) => (
-              <span
-                key={i}
-                className={`h-1.5 rounded-full transition-all ${
-                  i === active ? "w-6 bg-card" : "w-1.5 bg-card/60"
-                }`}
-              />
-            ))}
-          </div>
-        )}
       </div>
 
       {/* Content */}
