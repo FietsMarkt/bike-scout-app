@@ -170,7 +170,10 @@ export const AppSearch = () => {
 
         <PriceRow maxPrice={maxPrice} onChange={(v) => setParam("maxPrice", String(v))} />
 
-        {/* Plaats, Motor/E-bike, Bouwjaar en Kilometerstand komen binnenkort */}
+        <CityRow city={city} onChange={(v) => setParam("city", v)} />
+        <MotorRow motor={motor} onChange={(v) => setParam("motor", v)} />
+        <YearRow minYear={minYear} onChange={(v) => setParam("minYear", String(v))} />
+        <KmRow maxKm={maxKm} onChange={(v) => setParam("maxKm", String(v))} />
 
         <button
           onClick={saveSearch}
