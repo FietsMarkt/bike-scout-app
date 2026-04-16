@@ -1,6 +1,13 @@
 import type { Bike } from "@/components/BikeCard";
+import bike1 from "@/assets/bike-1.jpg";
+import bike2 from "@/assets/bike-2.jpg";
+import bike3 from "@/assets/bike-3.jpg";
+import bike4 from "@/assets/bike-4.jpg";
+import bike5 from "@/assets/bike-5.jpg";
+import bike6 from "@/assets/bike-6.jpg";
+import bike7 from "@/assets/bike-7.jpg";
+import bike8 from "@/assets/bike-8.jpg";
 
-// Royalty-free Unsplash bike imagery
 export const bikes: Bike[] = [
   {
     id: "1",
@@ -8,7 +15,7 @@ export const bikes: Bike[] = [
     subtitle: "Carbon racefiets · SRAM Force AXS",
     price: 6450, year: 2023, km: 1200,
     location: "Amsterdam, NH",
-    image: "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=900&auto=format&fit=crop",
+    image: bike1,
     badge: "Topdeal", dealer: true,
   },
   {
@@ -17,7 +24,7 @@ export const bikes: Bike[] = [
     subtitle: "E-bike · 710Wh · Riemaandrijving",
     price: 4290, year: 2024, km: 340, motor: "Bosch CX",
     location: "Utrecht, UT",
-    image: "https://images.unsplash.com/photo-1502744688674-c619d1586c9e?w=900&auto=format&fit=crop",
+    image: bike2,
     dealer: true,
   },
   {
@@ -26,7 +33,7 @@ export const bikes: Bike[] = [
     subtitle: "Full-suspension MTB · 29\" · GX Eagle",
     price: 3850, year: 2022, km: 2100,
     location: "Eindhoven, NB",
-    image: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?w=900&auto=format&fit=crop",
+    image: bike3,
     badge: "Nieuw binnen",
   },
   {
@@ -35,7 +42,7 @@ export const bikes: Bike[] = [
     subtitle: "Speed pedelec · 45 km/u · 983Wh",
     price: 7990, year: 2023, km: 5400, motor: "Cyro Drive",
     location: "Rotterdam, ZH",
-    image: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=900&auto=format&fit=crop",
+    image: bike4,
     dealer: true,
   },
   {
@@ -44,7 +51,7 @@ export const bikes: Bike[] = [
     subtitle: "Aero racefiets · Dura-Ace Di2",
     price: 11250, year: 2024, km: 600,
     location: "Den Haag, ZH",
-    image: "https://images.unsplash.com/photo-1571333250630-f0230c320b6d?w=900&auto=format&fit=crop",
+    image: bike5,
     badge: "Premium",
   },
   {
@@ -53,7 +60,7 @@ export const bikes: Bike[] = [
     subtitle: "Bakfiets · Bosch Performance · Dual Battery",
     price: 8990, year: 2023, km: 1800, motor: "Bosch CX",
     location: "Groningen, GR",
-    image: "https://images.unsplash.com/photo-1605719124000-10e0e1d1f06b?w=900&auto=format&fit=crop",
+    image: bike6,
     dealer: true,
   },
   {
@@ -62,7 +69,7 @@ export const bikes: Bike[] = [
     subtitle: "Gravel · Carbon · GRX 820",
     price: 2790, year: 2024, km: 150,
     location: "Tilburg, NB",
-    image: "https://images.unsplash.com/photo-1485965127911-65fe7c1a6f97?w=900&auto=format&fit=crop",
+    image: bike7,
     badge: "Nieuw",
   },
   {
@@ -71,6 +78,6 @@ export const bikes: Bike[] = [
     subtitle: "Vouwfiets · Titanium · 4-speed",
     price: 2350, year: 2023, km: 800,
     location: "Haarlem, NH",
-    image: "https://images.unsplash.com/photo-1595432541891-a461100d3054?w=900&auto=format&fit=crop",
+    image: bike8,
   },
 ];
