@@ -70,7 +70,7 @@ export const BottomTabBar = () => {
           className="flex-1 flex justify-center"
           aria-label="Plaats fiets"
         >
-          <span className="-mt-8 grid h-16 w-16 place-items-center rounded-2xl bg-gradient-indigo text-primary-foreground shadow-elevated ring-4 ring-header active:scale-95 transition-transform">
+          <span className="-mt-8 grid h-16 w-16 place-items-center rounded-2xl bg-card text-foreground border border-border shadow-elevated ring-4 ring-header active:scale-95 transition-transform">
             <Plus className="h-8 w-8" strokeWidth={2.5} />
           </span>
         </NavLink>
