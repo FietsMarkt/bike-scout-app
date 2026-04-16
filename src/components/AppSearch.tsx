@@ -238,16 +238,20 @@ const FilterRow = ({
   </Sheet>
 );
 
-const FilterTriggerButton = ({
-  label,
-  value,
-  leading,
-}: {
-  label: string;
-  value?: string;
-  leading: React.ReactNode;
-}) => (
-  <button className="w-full flex items-center gap-3 rounded-xl bg-card/10 border border-border/10 p-4 text-left active:bg-card/20 transition-colors">
+const FilterTriggerButton = React.forwardRef<
+  HTMLButtonElement,
+  {
+    label: string;
+    value?: string;
+    leading: React.ReactNode;
+  } & React.ButtonHTMLAttributes<HTMLButtonElement>
+>(({ label, value, leading, ...props }, ref) => (
+  <button
+    ref={ref}
+    type="button"
+    {...props}
+    className="w-full flex items-center gap-3 rounded-xl bg-card/10 border border-border/10 p-4 text-left active:bg-card/20 transition-colors"
+  >
     <span className="grid h-5 w-5 place-items-center shrink-0 opacity-90">{leading}</span>
     <div className="flex-1 min-w-0">
       <div className="font-display text-base font-semibold">{label}</div>
@@ -257,7 +261,8 @@ const FilterTriggerButton = ({
     </div>
     <ChevronRight className="h-5 w-5 opacity-60" />
   </button>
-);
+));
+FilterTriggerButton.displayName = "FilterTriggerButton";
 
 const SliderSheet = ({
   trigger,
