@@ -25,6 +25,7 @@ export type Database = {
           km: number | null
           model: string
           motor: string | null
+          previous_price: number | null
           price: number
           status: string
           subtitle: string | null
@@ -32,6 +33,7 @@ export type Database = {
           type: string
           updated_at: string
           user_id: string
+          view_count: number
           year: number
         }
         Insert: {
@@ -44,6 +46,7 @@ export type Database = {
           km?: number | null
           model: string
           motor?: string | null
+          previous_price?: number | null
           price: number
           status?: string
           subtitle?: string | null
@@ -51,6 +54,7 @@ export type Database = {
           type: string
           updated_at?: string
           user_id: string
+          view_count?: number
           year: number
         }
         Update: {
@@ -63,6 +67,7 @@ export type Database = {
           km?: number | null
           model?: string
           motor?: string | null
+          previous_price?: number | null
           price?: number
           status?: string
           subtitle?: string | null
@@ -70,9 +75,45 @@ export type Database = {
           type?: string
           updated_at?: string
           user_id?: string
+          view_count?: number
           year?: number
         }
         Relationships: []
+      }
+      conversations: {
+        Row: {
+          bike_id: string
+          buyer_id: string
+          created_at: string
+          id: string
+          last_message_at: string
+          seller_id: string
+        }
+        Insert: {
+          bike_id: string
+          buyer_id: string
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          seller_id: string
+        }
+        Update: {
+          bike_id?: string
+          buyer_id?: string
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          seller_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_bike_id_fkey"
+            columns: ["bike_id"]
+            isOneToOne: false
+            referencedRelation: "bikes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       favorites: {
         Row: {
@@ -99,6 +140,41 @@ export type Database = {
             columns: ["bike_id"]
             isOneToOne: false
             referencedRelation: "bikes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          body: string
+          conversation_id: string
+          created_at: string
+          id: string
+          read_at: string | null
+          sender_id: string
+        }
+        Insert: {
+          body: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id: string
+        }
+        Update: {
+          body?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
             referencedColumns: ["id"]
           },
         ]
@@ -138,6 +214,72 @@ export type Database = {
           is_dealer?: boolean
           phone?: string | null
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      push_subscriptions: {
+        Row: {
+          auth_key: string
+          created_at: string
+          endpoint: string
+          id: string
+          last_used_at: string
+          p256dh: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          auth_key: string
+          created_at?: string
+          endpoint: string
+          id?: string
+          last_used_at?: string
+          p256dh: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          auth_key?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          last_used_at?: string
+          p256dh?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      saved_searches: {
+        Row: {
+          created_at: string
+          filters: Json
+          id: string
+          last_checked_at: string
+          name: string
+          notify_email: boolean
+          notify_push: boolean
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          filters?: Json
+          id?: string
+          last_checked_at?: string
+          name: string
+          notify_email?: boolean
+          notify_push?: boolean
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          filters?: Json
+          id?: string
+          last_checked_at?: string
+          name?: string
+          notify_email?: boolean
+          notify_push?: boolean
           user_id?: string
         }
         Relationships: []
