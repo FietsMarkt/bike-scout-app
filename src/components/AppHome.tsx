@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, Heart } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useBikes } from "@/hooks/useBikes";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { getOptimizedImage } from "@/lib/image";
@@ -9,8 +8,7 @@ import { getOptimizedImage } from "@/lib/image";
 const fmt = new Intl.NumberFormat("nl-BE");
 
 /**
- * App home — uiterst simpel: titel "Fietsmarkt", "Zoek nu"-knop, daaronder een
- * grid met fietsadvertenties. Alle filters zitten op /zoeken.
+ * App home — AutoScout24-stijl: titel, grote "Zoek nu"-knop, daaronder grid.
  */
 export const AppHome = () => {
   const nav = useNavigate();
@@ -23,27 +21,29 @@ export const AppHome = () => {
 
   return (
     <div className="-mt-12 pb-2 bg-surface min-h-screen">
-      {/* HEADER — alleen titel + zoekknop */}
+      {/* HEADER */}
       <section
-        className="bg-gradient-hero text-header-foreground px-5 pb-6"
-        style={{ paddingTop: "calc(env(safe-area-inset-top) + 4rem)" }}
+        className="bg-header text-header-foreground px-5 pb-5"
+        style={{ paddingTop: "calc(env(safe-area-inset-top) + 3.5rem)" }}
       >
-        <h1 className="font-display text-3xl font-extrabold tracking-tight">
-          Fiets<span className="text-primary-soft">markt</span>
+        <h1 className="text-center font-display text-2xl font-extrabold tracking-tight">
+          <span className="bg-primary text-primary-foreground px-2 py-0.5 rounded-md">Fiets</span>
+          <span className="ml-1">Markt</span>
         </h1>
-        <Button
+
+        <button
           onClick={() => nav("/zoeken")}
-          size="lg"
-          variant="hero"
-          className="mt-4 w-full h-12 gap-2 rounded-xl shadow-elevated"
+          className="mt-5 w-full h-14 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center gap-3 shadow-elevated active:scale-[0.99] transition-transform"
         >
-          <Search className="h-4 w-4" />
-          Zoek nu
-        </Button>
+          <Search className="h-5 w-5" strokeWidth={2.5} />
+          <span className="font-display text-lg font-bold">Zoek nu</span>
+        </button>
       </section>
 
-      {/* FIETSEN GRID */}
-      <section className="px-3 pt-4">
+      {/* LAATST BEKEKEN */}
+      <section className="px-3 pt-5">
+        <h2 className="px-1 mb-3 font-display text-xl font-extrabold">Laatst gezocht</h2>
+
         {isLoading ? (
           <div className="grid grid-cols-2 gap-2.5">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -66,7 +66,7 @@ export const AppHome = () => {
                   onClick={() => nav(`/fiets/${b.id}`)}
                   className="rounded-2xl bg-card border border-border overflow-hidden text-left active:scale-[0.98] transition-transform shadow-card"
                 >
-                  <div className="relative aspect-square bg-muted">
+                  <div className="relative aspect-[4/3] bg-muted">
                     <img
                       src={getOptimizedImage(b.image, 400)}
                       alt={b.title}
@@ -85,12 +85,15 @@ export const AppHome = () => {
                       <Heart className={`h-4 w-4 ${isFav ? "fill-primary text-primary" : ""}`} />
                     </button>
                   </div>
-                  <div className="p-2.5">
+                  <div className="p-3">
                     <div className="font-display text-sm font-bold line-clamp-1">{b.title}</div>
                     <div className="mt-1 font-display text-base font-extrabold">
                       € {fmt.format(b.price)}
                     </div>
-                    <div className="text-[10px] text-muted-foreground truncate">{b.location}</div>
+                    <div className="mt-1 text-[11px] text-muted-foreground line-clamp-1">
+                      {b.km ? `${fmt.format(b.km)} km` : ""}{b.km && b.year ? ", " : ""}{b.year ?? ""}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground truncate">{b.location}</div>
                   </div>
                 </button>
               );
