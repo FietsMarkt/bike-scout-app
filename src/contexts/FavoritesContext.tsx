@@ -1,41 +1,46 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, ReactNode } from "react";
-
-const STORAGE_KEY = "fietsmarkt:favorites";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 type FavoritesContextType = {
   ids: string[];
-  toggle: (id: string) => void;
+  toggle: (bikeId: string) => Promise<void>;
   has: (id: string) => boolean;
   count: number;
-  clear: () => void;
 };
 
 const FavoritesContext = createContext<FavoritesContextType | null>(null);
 
 export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
-  const [ids, setIds] = useState<string[]>(() => {
-    if (typeof window === "undefined") return [];
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? (JSON.parse(raw) as string[]) : [];
-    } catch {
-      return [];
-    }
-  });
+  const { user } = useAuth();
+  const [ids, setIds] = useState<string[]>([]);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
-    } catch { /* ignore */ }
-  }, [ids]);
+    if (!user) { setIds([]); return; }
+    supabase
+      .from("favorites")
+      .select("bike_id")
+      .eq("user_id", user.id)
+      .then(({ data }) => setIds((data ?? []).map((r) => r.bike_id)));
+  }, [user]);
 
-  const toggle = useCallback((id: string) => {
-    setIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
-  }, []);
+  const toggle = useCallback(async (bikeId: string) => {
+    if (!user) {
+      window.location.href = "/inloggen";
+      return;
+    }
+    if (ids.includes(bikeId)) {
+      setIds((prev) => prev.filter((x) => x !== bikeId));
+      await supabase.from("favorites").delete().eq("user_id", user.id).eq("bike_id", bikeId);
+    } else {
+      setIds((prev) => [...prev, bikeId]);
+      await supabase.from("favorites").insert({ user_id: user.id, bike_id: bikeId });
+    }
+  }, [user, ids]);
+
   const has = useCallback((id: string) => ids.includes(id), [ids]);
-  const clear = useCallback(() => setIds([]), []);
 
-  const value = useMemo(() => ({ ids, toggle, has, count: ids.length, clear }), [ids, toggle, has, clear]);
+  const value = useMemo(() => ({ ids, toggle, has, count: ids.length }), [ids, toggle, has]);
   return <FavoritesContext.Provider value={value}>{children}</FavoritesContext.Provider>;
 };
 
