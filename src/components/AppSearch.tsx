@@ -167,7 +167,7 @@ export const AppSearch = () => {
           options={BIKE_TYPES} onChange={(v) => setParam("type", v)} current={type} />
 
         <FilterRow icon={Tag} label="Merk" value={brand !== "Alle merken" ? brand : undefined}
-          options={BIKE_BRANDS} onChange={(v) => setParam("brand", v)} current={brand} maxHeight />
+          options={BIKE_BRANDS} onChange={(v) => setParam("brand", v)} current={brand} searchable />
 
         <PriceRow maxPrice={maxPrice} onChange={(v) => setParam("maxPrice", String(v))} />
 
