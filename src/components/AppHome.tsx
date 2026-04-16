@@ -26,23 +26,21 @@ export const AppHome = () => {
         className="bg-background px-5 pb-5 border-b border-border/40"
         style={{ paddingTop: "calc(env(safe-area-inset-top) + 0.875rem)" }}
       >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-indigo">
-              <Bike className="h-[18px] w-[18px] text-primary-foreground" strokeWidth={2} />
-            </span>
-            <h1 className="font-display text-[22px] font-semibold tracking-tight leading-none">
-              Fiets<span className="text-primary font-medium">markt</span>
-            </h1>
-          </div>
+        <div className="flex items-center justify-center gap-3">
+          <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-indigo">
+            <Bike className="h-5 w-5 text-primary-foreground" strokeWidth={2} />
+          </span>
+          <h1 className="font-display text-[28px] font-semibold tracking-tight leading-none">
+            Fiets<span className="text-primary font-medium">markt</span>
+          </h1>
         </div>
 
         <button
           onClick={() => nav("/zoeken")}
-          className="mt-5 w-full h-[52px] rounded-2xl bg-card border border-border/60 flex items-center gap-3 px-5 text-left active:scale-[0.99] transition-transform"
+          className="mt-5 w-full h-[52px] rounded-2xl bg-card border border-border/60 flex items-center justify-center gap-3 active:scale-[0.99] transition-transform"
         >
           <Search className="h-[18px] w-[18px] text-muted-foreground" strokeWidth={2} />
-          <span className="text-[15px] font-normal text-muted-foreground">Zoek merk, model of trefwoord</span>
+          <span className="text-[15px] font-normal text-muted-foreground">Zoek nu</span>
         </button>
       </section>
 
