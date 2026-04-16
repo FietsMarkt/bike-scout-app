@@ -33,8 +33,37 @@ export const AppHome = () => {
   const nav = useNavigate();
   const fav = useFavorites();
   const { t } = useTranslation();
+  const qc = useQueryClient();
   const { data: latest = [], isLoading } = useBikes({ sort: "relevance" });
   const [deal, setDeal] = useState<DealRow | null>(null);
+
+  // Pull-to-refresh — invalidate queries to refetch latest + deal.
+  const { pull, refreshing, threshold } = usePullToRefresh({
+    onRefresh: async () => {
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ["bikes"] }),
+        qc.invalidateQueries({ queryKey: ["bikes-count"] }),
+      ]);
+      // Also refetch deal-of-week
+      const { data } = await supabase
+        .from("bikes")
+        .select("id, title, price, previous_price, city, year, km, images")
+        .eq("status", "active")
+        .not("previous_price", "is", null)
+        .limit(50);
+      if (data) {
+        const best = (data as DealRow[])
+          .filter((b) => b.previous_price && b.previous_price > b.price)
+          .sort((a, b) => {
+            const dA = ((a.previous_price ?? 0) - a.price) / (a.previous_price ?? 1);
+            const dB = ((b.previous_price ?? 0) - b.price) / (b.previous_price ?? 1);
+            return dB - dA;
+          })[0];
+        setDeal(best ?? null);
+      }
+      haptic("success");
+    },
+  });
 
   useEffect(() => {
     document.title = "Fietsmarkt";
