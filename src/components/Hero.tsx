@@ -51,42 +51,42 @@ export const Hero = () => {
 
         <form onSubmit={submit} className="mt-10 rounded-2xl bg-card text-card-foreground shadow-elevated overflow-hidden max-w-5xl">
           <div className="flex border-b border-border">
-            {(["kopen", "verkopen"] as const).map((t) => (
+            {(["kopen", "verkopen"] as const).map((tabKey) => (
               <button
-                key={t} type="button" onClick={() => setTab(t)}
+                key={tabKey} type="button" onClick={() => setTab(tabKey)}
                 className={`px-6 py-4 text-sm font-semibold transition-smooth border-b-2 ${
-                  tab === t ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
+                  tab === tabKey ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {t === "kopen" ? (useTranslation().t("hero.tabBuy")) : (useTranslation().t("hero.tabSell"))}
+                {tabKey === "kopen" ? t("hero.tabBuy") : t("hero.tabSell")}
               </button>
             ))}
           </div>
 
           <div className="p-5 md:p-6 grid gap-3 md:grid-cols-12">
             <div className="md:col-span-3">
-              <label className="text-xs font-semibold text-muted-foreground">Type</label>
+              <label className="text-xs font-semibold text-muted-foreground">{t("hero.type")}</label>
               <Select value={type} onValueChange={setType}>
                 <SelectTrigger className="mt-1 h-11"><SelectValue /></SelectTrigger>
-                <SelectContent>{BIKE_TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
+                <SelectContent>{BIKE_TYPES.map((tp) => <SelectItem key={tp} value={tp}>{tp}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div className="md:col-span-3">
-              <label className="text-xs font-semibold text-muted-foreground">Merk</label>
+              <label className="text-xs font-semibold text-muted-foreground">{t("hero.brand")}</label>
               <Select value={brand} onValueChange={setBrand}>
                 <SelectTrigger className="mt-1 h-11"><SelectValue /></SelectTrigger>
                 <SelectContent className="max-h-72">{BIKE_BRANDS.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div className="md:col-span-2">
-              <label className="text-xs font-semibold text-muted-foreground">Prijs tot</label>
+              <label className="text-xs font-semibold text-muted-foreground">{t("hero.priceUpTo")}</label>
               <Select value={maxPrice} onValueChange={setMaxPrice}>
                 <SelectTrigger className="mt-1 h-11"><SelectValue /></SelectTrigger>
                 <SelectContent>{PRICE_OPTIONS.map((p) => <SelectItem key={p.value} value={String(p.value)}>{p.label}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div className="md:col-span-2">
-              <label className="text-xs font-semibold text-muted-foreground">Postcode</label>
+              <label className="text-xs font-semibold text-muted-foreground">{t("hero.postcode")}</label>
               <div className="relative mt-1">
                 <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input className="h-11 pl-9" placeholder="1011 AB" value={postcode} onChange={(e) => setPostcode(e.target.value)} />
@@ -94,15 +94,15 @@ export const Hero = () => {
             </div>
             <div className="md:col-span-2 flex items-end">
               <Button type="submit" variant="hero" size="lg" className="w-full h-11 gap-2">
-                <Search className="h-4 w-4" /> {tab === "kopen" ? "Zoeken" : "Plaatsen"}
+                <Search className="h-4 w-4" /> {tab === "kopen" ? t("hero.search") : t("hero.place")}
               </Button>
             </div>
           </div>
 
           <div className="px-6 pb-5 -mt-1 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted-foreground">
-            <span>84.213 resultaten</span>
-            <Link to="/zoeken" className="text-primary font-semibold hover:underline">Geavanceerd zoeken</Link>
-            <Link to="/favorieten" className="text-primary font-semibold hover:underline">Bewaarde zoekopdrachten</Link>
+            <span>{t("hero.results", { count: 84213 })}</span>
+            <Link to="/zoeken" className="text-primary font-semibold hover:underline">{t("hero.advancedSearch")}</Link>
+            <Link to="/favorieten" className="text-primary font-semibold hover:underline">{t("hero.savedSearches")}</Link>
           </div>
         </form>
       </div>
