@@ -26,9 +26,9 @@ export const AppHome = () => {
         className="bg-background px-5 pb-5 border-b border-border/40"
         style={{ paddingTop: "calc(env(safe-area-inset-top) + 0.875rem)" }}
       >
-        <div className="flex items-center justify-center gap-2 font-display text-2xl font-extrabold">
-          <span className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-indigo">
-            <Bike className="h-5 w-5 text-primary-foreground" />
+        <div className="flex items-center justify-center gap-3 font-display text-3xl font-extrabold">
+          <span className="grid h-12 w-12 place-items-center rounded-xl bg-gradient-indigo">
+            <Bike className="h-7 w-7 text-primary-foreground" />
           </span>
           <span>Fiets<span style={{ color: "hsl(239 84% 60%)" }}>Markt</span></span>
         </div>
