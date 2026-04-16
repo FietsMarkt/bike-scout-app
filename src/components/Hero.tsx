@@ -89,7 +89,16 @@ export const Hero = () => {
               <label className="text-xs font-semibold text-muted-foreground">{t("hero.postcode")}</label>
               <div className="relative mt-1">
                 <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input className="h-11 pl-9" placeholder="1011 AB" value={postcode} onChange={(e) => setPostcode(e.target.value)} />
+                <Input
+                  className="h-11 pl-9"
+                  placeholder="1000"
+                  inputMode="numeric"
+                  pattern="[1-9][0-9]{3}"
+                  maxLength={4}
+                  title="Belgische postcode (4 cijfers, 1000-9999)"
+                  value={postcode}
+                  onChange={(e) => setPostcode(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                />
               </div>
             </div>
             <div className="md:col-span-2 flex items-end">
