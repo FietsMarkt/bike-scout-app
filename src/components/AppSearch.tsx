@@ -166,10 +166,7 @@ export const AppSearch = () => {
 
         <PriceRow maxPrice={maxPrice} onChange={(v) => setParam("maxPrice", String(v))} />
 
-        <SimpleRow icon={MapPin} label="Plaats" badge="België" />
-        <SimpleRow icon={Zap} label="Motor / E-bike" />
-        <SimpleRow icon={Calendar} label="Bouwjaar" />
-        <SimpleRow icon={Gauge} label="Kilometerstand" />
+        {/* Plaats, Motor/E-bike, Bouwjaar en Kilometerstand komen binnenkort */}
 
         <button
           onClick={saveSearch}
