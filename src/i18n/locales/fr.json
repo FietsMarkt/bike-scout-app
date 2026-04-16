@@ -66,5 +66,25 @@
     "addFav": "Ajouter aux favoris",
     "removeFav": "Retirer des favoris",
     "dealer": "Revendeur"
+  },
+  "app": {
+    "searchNow": "Rechercher",
+    "lastSearched": "Récemment consultés",
+    "filters": "Filtres",
+    "type": "Type",
+    "brand": "Marque",
+    "price": "Prix",
+    "city": "Ville",
+    "motor": "Moteur / Vélo électrique",
+    "year": "Année",
+    "km": "Kilométrage",
+    "showResults": "Voir les résultats",
+    "clearAll": "Effacer",
+    "saveSearch": "Enregistrer la recherche",
+    "noResults": "Aucun résultat",
+    "all": "Tous",
+    "back": "Retour",
+    "share": "Partager",
+    "contact": "Contacter le vendeur"
   }
 }

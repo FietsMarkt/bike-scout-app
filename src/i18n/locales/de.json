@@ -66,5 +66,25 @@
     "addFav": "Zu Favoriten hinzufügen",
     "removeFav": "Aus Favoriten entfernen",
     "dealer": "Händler"
+  },
+  "app": {
+    "searchNow": "Jetzt suchen",
+    "lastSearched": "Zuletzt gesucht",
+    "filters": "Filter",
+    "type": "Typ",
+    "brand": "Marke",
+    "price": "Preis",
+    "city": "Ort",
+    "motor": "Motor / E-Bike",
+    "year": "Baujahr",
+    "km": "Kilometerstand",
+    "showResults": "Ergebnisse anzeigen",
+    "clearAll": "Löschen",
+    "saveSearch": "Suche speichern",
+    "noResults": "Keine Ergebnisse",
+    "all": "Alle",
+    "back": "Zurück",
+    "share": "Teilen",
+    "contact": "Verkäufer kontaktieren"
   }
 }

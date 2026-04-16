@@ -66,5 +66,25 @@
     "addFav": "Toevoegen aan favorieten",
     "removeFav": "Verwijder uit favorieten",
     "dealer": "Dealer"
+  },
+  "app": {
+    "searchNow": "Zoek nu",
+    "lastSearched": "Laatst gezocht",
+    "filters": "Filters",
+    "type": "Type",
+    "brand": "Merk",
+    "price": "Prijs",
+    "city": "Plaats",
+    "motor": "Motor / E-bike",
+    "year": "Bouwjaar",
+    "km": "Kilometerstand",
+    "showResults": "Toon resultaten",
+    "clearAll": "Wissen",
+    "saveSearch": "Zoekopdracht bewaren",
+    "noResults": "Geen resultaten",
+    "all": "Alle",
+    "back": "Terug",
+    "share": "Delen",
+    "contact": "Contact verkoper"
   }
 }

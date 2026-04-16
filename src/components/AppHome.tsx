@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Search, Heart, Bike } from "lucide-react";
 import { useBikes } from "@/hooks/useBikes";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { getOptimizedImage } from "@/lib/image";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 const fmt = new Intl.NumberFormat("nl-BE");
 
@@ -13,6 +15,7 @@ const fmt = new Intl.NumberFormat("nl-BE");
 export const AppHome = () => {
   const nav = useNavigate();
   const fav = useFavorites();
+  const { t } = useTranslation();
   const { data: latest = [], isLoading } = useBikes({ sort: "relevance" });
 
   useEffect(() => {
@@ -23,9 +26,16 @@ export const AppHome = () => {
     <div className="pb-2 bg-background min-h-screen">
       {/* HEADER — modern, minimal, fijn lettertype */}
       <section
-        className="bg-background px-5 pb-5 border-b border-border/40"
+        className="bg-background px-5 pb-5 border-b border-border/40 relative"
         style={{ paddingTop: "calc(env(safe-area-inset-top) + 0.875rem)" }}
       >
+        <div
+          className="absolute right-3"
+          style={{ top: "calc(env(safe-area-inset-top) + 0.5rem)" }}
+        >
+          <LanguageSwitcher variant="default" />
+        </div>
+
         <div className="flex items-center justify-center gap-3 font-display text-3xl font-extrabold">
           <span className="grid h-12 w-12 place-items-center rounded-xl bg-gradient-indigo">
             <Bike className="h-7 w-7 text-primary-foreground" />
@@ -38,13 +48,13 @@ export const AppHome = () => {
           className="mt-5 w-full h-[52px] rounded-2xl bg-card border border-border/60 flex items-center justify-center gap-3 active:scale-[0.99] transition-transform"
         >
           <Search className="h-[18px] w-[18px] text-muted-foreground" strokeWidth={2} />
-          <span className="text-[15px] font-normal text-muted-foreground">Zoek nu</span>
+          <span className="text-[15px] font-normal text-muted-foreground">{t("app.searchNow")}</span>
         </button>
       </section>
 
       {/* LAATST BEKEKEN */}
       <section className="px-3 pt-5">
-        <h2 className="px-1 mb-3 font-display text-xl font-extrabold">Laatst gezocht</h2>
+        <h2 className="px-1 mb-3 font-display text-xl font-extrabold">{t("app.lastSearched")}</h2>
 
         {isLoading ? (
           <div className="grid grid-cols-2 gap-2.5">
