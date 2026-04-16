@@ -7,10 +7,12 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { BIKE_TYPES, BIKE_BRANDS, PRICE_OPTIONS } from "@/lib/constants";
 import { useTranslation } from "react-i18next";
+import { useBikeCount } from "@/hooks/useBikes";
 
 export const Hero = () => {
   const { t } = useTranslation();
   const nav = useNavigate();
+  const { data: bikeCount } = useBikeCount();
   const [tab, setTab] = useState<"kopen" | "verkopen">("kopen");
   const [type, setType] = useState(BIKE_TYPES[0]);
   const [brand, setBrand] = useState(BIKE_BRANDS[0]);
@@ -109,9 +111,9 @@ export const Hero = () => {
           </div>
 
           <div className="px-6 pb-5 -mt-1 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted-foreground">
-            <span>{t("hero.results", { count: 84213 })}</span>
+            <span>{t("hero.results", { count: bikeCount ?? 0 })}</span>
             <Link to="/zoeken" className="text-primary font-semibold hover:underline">{t("hero.advancedSearch")}</Link>
-            <Link to="/favorieten" className="text-primary font-semibold hover:underline">{t("hero.savedSearches")}</Link>
+            <Link to="/zoekopdrachten" className="text-primary font-semibold hover:underline">{t("hero.savedSearches")}</Link>
           </div>
         </form>
       </div>
