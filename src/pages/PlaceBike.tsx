@@ -34,14 +34,46 @@ const PlaceBike = () => {
     }
   }, [user, loading, nav, toast]);
 
+  const ALLOWED_MIME = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+  const MAX_BYTES = 5 * 1024 * 1024; // 5 MB
+
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newFiles = Array.from(e.target.files ?? []).slice(0, 8 - files.length);
-    setFiles((prev) => [...prev, ...newFiles]);
-    newFiles.forEach((file) => {
+    const incoming = Array.from(e.target.files ?? []);
+    const accepted: File[] = [];
+    const rejected: string[] = [];
+
+    for (const file of incoming) {
+      if (!ALLOWED_MIME.includes(file.type)) {
+        rejected.push(`${file.name}: type niet toegestaan`);
+        continue;
+      }
+      if (file.size > MAX_BYTES) {
+        rejected.push(`${file.name}: groter dan 5 MB`);
+        continue;
+      }
+      accepted.push(file);
+    }
+
+    const slot = 8 - files.length;
+    const toAdd = accepted.slice(0, slot);
+
+    if (rejected.length) {
+      toast({
+        title: "Sommige bestanden zijn geweigerd",
+        description: rejected.slice(0, 3).join(" · "),
+        variant: "destructive",
+      });
+    }
+
+    setFiles((prev) => [...prev, ...toAdd]);
+    toAdd.forEach((file) => {
       const reader = new FileReader();
       reader.onload = () => setPreviews((p) => [...p, String(reader.result)]);
       reader.readAsDataURL(file);
     });
+
+    // Reset input so re-selecting the same file works
+    e.target.value = "";
   };
 
   const removeImage = (i: number) => {
@@ -60,9 +92,13 @@ const PlaceBike = () => {
     try {
       const imageUrls: string[] = [];
       for (const file of files) {
-        const ext = file.name.split(".").pop() ?? "jpg";
+        // Defense in depth: re-validate before upload
+        if (!ALLOWED_MIME.includes(file.type) || file.size > MAX_BYTES) continue;
+        const ext = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
         const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-        const { error: upErr } = await supabase.storage.from("bike-photos").upload(path, file);
+        const { error: upErr } = await supabase.storage
+          .from("bike-photos")
+          .upload(path, file, { contentType: file.type });
         if (upErr) throw upErr;
         const { data } = supabase.storage.from("bike-photos").getPublicUrl(path);
         imageUrls.push(data.publicUrl);
@@ -174,8 +210,8 @@ const PlaceBike = () => {
                   <Upload className="h-6 w-6" />
                 </span>
                 <span className="font-semibold">Klik om foto's te uploaden</span>
-                <span className="text-xs text-muted-foreground">JPG of PNG · meerdere foto's mogelijk</span>
-                <input type="file" accept="image/*" multiple className="hidden" onChange={handleImage} />
+                <span className="text-xs text-muted-foreground">JPG, PNG, WebP of GIF · max 5 MB per foto</span>
+                <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple className="hidden" onChange={handleImage} />
               </label>
             )}
           </section>
