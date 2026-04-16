@@ -1,26 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/Layout";
-import { BikeCard, type Bike } from "@/components/BikeCard";
+import { BikeCard } from "@/components/BikeCard";
+import { BikeGridSkeleton } from "@/components/BikeCardSkeleton";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
-import { fetchFavoriteBikes } from "@/lib/bikes";
+import { useFavoriteBikes } from "@/hooks/useBikes";
 import { Heart } from "lucide-react";
 
 const Favorites = () => {
   const { user, loading: authLoading } = useAuth();
   const { ids } = useFavorites();
-  const [list, setList] = useState<Bike[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: list = [], isLoading } = useFavoriteBikes(user?.id);
 
   useEffect(() => { document.title = "Mijn favorieten | FietsMarkt"; }, []);
-
-  useEffect(() => {
-    if (!user) { setList([]); setLoading(false); return; }
-    setLoading(true);
-    fetchFavoriteBikes(user.id).then(setList).finally(() => setLoading(false));
-  }, [user, ids.length]);
 
   if (authLoading) return <Layout><div className="container py-20 text-center text-muted-foreground">Laden…</div></Layout>;
 
@@ -39,15 +33,20 @@ const Favorites = () => {
     );
   }
 
+  // Filter out bikes that are no longer favorited locally (optimistic)
+  const visible = list.filter((b) => ids.includes(b.id));
+
   return (
     <Layout>
       <div className="container py-10">
         <div>
           <h1 className="font-display text-3xl font-extrabold">Mijn favorieten</h1>
-          <p className="text-sm text-muted-foreground mt-1">{loading ? "Laden..." : `${list.length} bewaarde fietsen`}</p>
+          <p className="text-sm text-muted-foreground mt-1">{isLoading ? "Laden..." : `${visible.length} bewaarde fietsen`}</p>
         </div>
 
-        {!loading && list.length === 0 ? (
+        {isLoading ? (
+          <div className="mt-8"><BikeGridSkeleton count={4} /></div>
+        ) : visible.length === 0 ? (
           <div className="mt-10 text-center py-16 border border-dashed border-border rounded-2xl">
             <span className="grid h-14 w-14 mx-auto place-items-center rounded-full bg-primary-soft text-primary">
               <Heart className="h-6 w-6" />
@@ -58,7 +57,7 @@ const Favorites = () => {
           </div>
         ) : (
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {list.map((b) => <Link key={b.id} to={`/fiets/${b.id}`}><BikeCard bike={b} /></Link>)}
+            {visible.map((b) => <Link key={b.id} to={`/fiets/${b.id}`}><BikeCard bike={b} /></Link>)}
           </div>
         )}
       </div>

@@ -1,20 +1,14 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { BikeCard, type Bike } from "@/components/BikeCard";
+import { BikeGridSkeleton } from "@/components/BikeCardSkeleton";
 import { Button } from "@/components/ui/button";
-import { fetchBikes } from "@/lib/bikes";
+import { useBikes } from "@/hooks/useBikes";
 
 export const FeaturedListings = () => {
   const { t } = useTranslation();
-  const [bikes, setBikes] = useState<Bike[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchBikes({ sort: "relevance" })
-      .then((list) => setBikes(list.slice(0, 8)))
-      .finally(() => setLoading(false));
-  }, []);
+  const { data: all = [], isLoading } = useBikes({ sort: "relevance" });
+  const bikes = (all as Bike[]).slice(0, 8);
 
   return (
     <section className="container py-14">
@@ -29,12 +23,8 @@ export const FeaturedListings = () => {
         </Link>
       </div>
 
-      {loading ? (
-        <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="aspect-[4/3] rounded-xl bg-muted animate-pulse" />
-          ))}
-        </div>
+      {isLoading ? (
+        <BikeGridSkeleton count={4} />
       ) : bikes.length === 0 ? (
         <div className="text-center py-16 border border-dashed border-border rounded-2xl">
           <p className="text-muted-foreground">{t("featured.empty")}</p>

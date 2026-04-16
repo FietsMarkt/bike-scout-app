@@ -1,56 +1,38 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import {
-  Heart, MapPin, Calendar, Gauge, Zap, Share2, ShieldCheck, Mail, ChevronLeft, CheckCircle2,
+  Heart, MapPin, Calendar, Gauge, Zap, Share2, ShieldCheck, Mail, ChevronLeft, CheckCircle2, Store,
 } from "lucide-react";
-import { fetchBikeById } from "@/lib/bikes";
-import type { Bike } from "@/components/BikeCard";
+import { useBike, useSellerProfile } from "@/hooks/useBikes";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { getOrCreateConversation } from "@/lib/chat";
+import { getOptimizedImage } from "@/lib/image";
 
-const fmt = new Intl.NumberFormat("nl-NL");
+const fmt = new Intl.NumberFormat("nl-BE");
 
 const BikeDetail = () => {
   const { id } = useParams();
+  const nav = useNavigate();
   const { toast } = useToast();
   const fav = useFavorites();
   const { user } = useAuth();
-  const [bike, setBike] = useState<Bike | null>(null);
-  const [raw, setRaw] = useState<Record<string, unknown> | null>(null);
-  const [sellerName, setSellerName] = useState<string>("Verkoper");
-  const [loading, setLoading] = useState(true);
-  const [contactOpen, setContactOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("Hallo, is deze fiets nog beschikbaar?");
+  const { data: res, isLoading } = useBike(id);
+  const bike = res?.bike;
+  const raw = res?.raw;
+  const sellerId = (raw?.user_id as string | undefined);
+  const { data: seller } = useSellerProfile(sellerId);
+  const sellerName = seller?.display_name ?? "Verkoper";
   const [activeImage, setActiveImage] = useState(0);
-
-  useEffect(() => {
-    if (!id) return;
-    setLoading(true);
-    fetchBikeById(id).then(async (res) => {
-      if (res) {
-        setBike(res.bike);
-        setRaw(res.raw);
-        const sellerId = res.raw.user_id as string;
-        const { data: prof } = await supabase
-          .from("profiles").select("display_name").eq("user_id", sellerId).maybeSingle();
-        if (prof?.display_name) setSellerName(prof.display_name);
-      }
-      setLoading(false);
-    });
-  }, [id]);
+  const [contacting, setContacting] = useState(false);
 
   useEffect(() => { if (bike) document.title = `${bike.title} | FietsMarkt`; }, [bike]);
 
-  if (loading) {
+  if (isLoading) {
     return <Layout><div className="container py-20 text-center text-muted-foreground">Laden…</div></Layout>;
   }
   if (!bike || !raw) {
@@ -76,10 +58,19 @@ const BikeDetail = () => {
     toast({ title: "Link gekopieerd" });
   };
 
-  const submitContact = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast({ title: "Bericht verstuurd", description: "We hebben je vraag naar de verkoper gestuurd." });
-    setContactOpen(false);
+  const startChat = async () => {
+    if (!user) { nav("/inloggen"); return; }
+    if (!sellerId) return;
+    if (sellerId === user.id) {
+      toast({ title: "Dit is je eigen advertentie" });
+      return;
+    }
+    setContacting(true);
+    try {
+      const conv = await getOrCreateConversation(bike.id, sellerId, user.id);
+      if (conv) nav(`/berichten/${conv.id}`);
+      else toast({ title: "Niet gelukt", variant: "destructive" });
+    } finally { setContacting(false); }
   };
 
   return (
@@ -92,7 +83,7 @@ const BikeDetail = () => {
         <div className="mt-4 grid gap-8 lg:grid-cols-[1fr_380px]">
           <div>
             <div className="rounded-2xl overflow-hidden bg-muted aspect-[4/3]">
-              <img src={images[activeImage]} alt={bike.title} className="h-full w-full object-cover" />
+              <img src={getOptimizedImage(images[activeImage], 1200, 80)} alt={bike.title} className="h-full w-full object-cover" />
             </div>
             {images.length > 1 && (
               <div className="mt-3 grid grid-cols-4 gap-3">
@@ -101,7 +92,7 @@ const BikeDetail = () => {
                     className={`aspect-[4/3] rounded-lg overflow-hidden bg-muted border-2 transition-smooth ${
                       activeImage === i ? "border-primary" : "border-border"
                     }`}>
-                    <img src={src} alt={`${bike.title} foto ${i + 1}`} className="h-full w-full object-cover" loading="lazy" />
+                    <img src={getOptimizedImage(src, 200)} alt={`${bike.title} foto ${i + 1}`} className="h-full w-full object-cover" loading="lazy" />
                   </button>
                 ))}
               </div>
@@ -132,6 +123,24 @@ const BikeDetail = () => {
                 ))}
               </dl>
             </section>
+
+            {sellerId && (
+              <section className="mt-8 rounded-xl border border-border bg-card p-5 flex items-center gap-4">
+                <div className="grid h-14 w-14 place-items-center rounded-full bg-gradient-indigo text-white font-bold overflow-hidden">
+                  {seller?.avatar_url
+                    ? <img src={seller.avatar_url} alt={sellerName} className="h-full w-full object-cover" />
+                    : sellerName.charAt(0).toUpperCase()}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-display font-bold inline-flex items-center gap-2">
+                    {sellerName}
+                    {seller?.is_dealer && <Store className="h-4 w-4 text-primary" />}
+                  </div>
+                  <p className="text-xs text-muted-foreground">{seller?.city ?? bike.location}</p>
+                </div>
+                <Link to={`/verkoper/${sellerId}`}><Button variant="outline" size="sm">Bekijk profiel</Button></Link>
+              </section>
+            )}
           </div>
 
           <aside className="lg:sticky lg:top-20 self-start">
@@ -141,6 +150,12 @@ const BikeDetail = () => {
               <p className="text-sm text-muted-foreground mt-1">{bike.subtitle}</p>
 
               <div className="mt-4 font-display text-3xl font-extrabold text-primary">€ {fmt.format(bike.price)}</div>
+              {(raw.previous_price as number | null) && (raw.previous_price as number) > bike.price && (
+                <div className="mt-1 text-sm">
+                  <span className="line-through text-muted-foreground">€ {fmt.format(raw.previous_price as number)}</span>
+                  <span className="ml-2 inline-flex items-center rounded-full bg-success/10 text-success px-2 py-0.5 text-xs font-bold">Prijsdaling</span>
+                </div>
+              )}
 
               <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-muted-foreground">
                 <span className="inline-flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> {bike.year}</span>
@@ -150,10 +165,7 @@ const BikeDetail = () => {
               </div>
 
               <div className="mt-5 flex flex-col gap-2">
-                <Button variant="hero" size="lg" className="w-full" onClick={() => {
-                  setContactOpen((o) => !o);
-                  if (user?.email) setEmail(user.email);
-                }}>
+                <Button variant="hero" size="lg" className="w-full" onClick={startChat} disabled={contacting}>
                   <Mail className="h-4 w-4" /> Stuur bericht
                 </Button>
                 <div className="grid grid-cols-2 gap-2">
@@ -167,15 +179,6 @@ const BikeDetail = () => {
                   </Button>
                 </div>
               </div>
-
-              {contactOpen && (
-                <form onSubmit={submitContact} className="mt-5 pt-5 border-t border-border space-y-3">
-                  <Input placeholder="Je naam" required value={name} onChange={(e) => setName(e.target.value)} />
-                  <Input placeholder="Je e-mailadres" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-                  <Textarea rows={4} value={message} onChange={(e) => setMessage(e.target.value)} />
-                  <Button type="submit" variant="hero" className="w-full">Verstuur bericht</Button>
-                </form>
-              )}
 
               <div className="mt-5 pt-5 border-t border-border space-y-2 text-xs text-muted-foreground">
                 <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-success" /> FietsGarant® bescherming</span>

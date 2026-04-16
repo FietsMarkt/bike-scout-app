@@ -2,19 +2,24 @@ import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { BikeCard, type Bike } from "@/components/BikeCard";
+import { BikeGridSkeleton } from "@/components/BikeCardSkeleton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { BIKE_TYPES, BIKE_BRANDS } from "@/lib/constants";
-import { fetchBikes } from "@/lib/bikes";
-import { SlidersHorizontal, X } from "lucide-react";
+import { useBikes } from "@/hooks/useBikes";
+import { useAuth } from "@/contexts/AuthContext";
+import { createSavedSearch } from "@/lib/savedSearches";
+import { useToast } from "@/hooks/use-toast";
+import { SlidersHorizontal, X, Bookmark } from "lucide-react";
 
 const Search = () => {
   const [params, setParams] = useSearchParams();
   const [open, setOpen] = useState(false);
-  const [results, setResults] = useState<Bike[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [saving, setSaving] = useState(false);
 
   const q = params.get("q") ?? "";
   const type = params.get("type") ?? "Alle types";
@@ -22,6 +27,8 @@ const Search = () => {
   const maxPrice = Number(params.get("maxPrice") ?? 0);
   const sort = (params.get("sort") ?? "relevance") as
     "relevance" | "price-asc" | "price-desc" | "year-desc" | "km-asc";
+
+  const { data: results = [], isLoading } = useBikes({ q, type, brand, maxPrice, sort });
 
   const setParam = (key: string, value: string) => {
     const next = new URLSearchParams(params);
@@ -33,20 +40,28 @@ const Search = () => {
     setParams(next);
   };
 
-  useEffect(() => {
-    setLoading(true);
-    fetchBikes({ q, type, brand, maxPrice, sort })
-      .then(setResults)
-      .finally(() => setLoading(false));
-  }, [q, type, brand, maxPrice, sort]);
-
   useEffect(() => { document.title = `Zoeken${q ? ` · ${q}` : ""} | FietsMarkt`; }, [q]);
 
   const clearAll = () => setParams(new URLSearchParams());
+
+  const saveSearch = async () => {
+    if (!user) { window.location.href = "/inloggen"; return; }
+    const defaultName = [type !== "Alle types" && type, brand !== "Alle merken" && brand, q].filter(Boolean).join(" ").trim() || "Mijn zoekopdracht";
+    const name = prompt("Naam voor deze zoekopdracht:", defaultName);
+    if (!name) return;
+    setSaving(true);
+    try {
+      await createSavedSearch(user.id, name, { q, type, brand, maxPrice });
+      toast({ title: "Zoekopdracht bewaard", description: "Je krijgt push-meldingen bij nieuwe matches." });
+    } catch (e) {
+      toast({ title: "Niet gelukt", description: (e as Error).message, variant: "destructive" });
+    } finally { setSaving(false); }
+  };
+
   const activeFilters = [
     type !== "Alle types" && type,
     brand !== "Alle merken" && brand,
-    maxPrice > 0 && `tot € ${maxPrice.toLocaleString("nl-NL")}`,
+    maxPrice > 0 && `tot € ${maxPrice.toLocaleString("nl-BE")}`,
     q && `"${q}"`,
   ].filter(Boolean) as string[];
 
@@ -72,12 +87,15 @@ const Search = () => {
       </div>
       <div>
         <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-          Max prijs: {maxPrice > 0 ? `€ ${maxPrice.toLocaleString("nl-NL")}` : "geen limiet"}
+          Max prijs: {maxPrice > 0 ? `€ ${maxPrice.toLocaleString("nl-BE")}` : "geen limiet"}
         </label>
         <Slider className="mt-3" min={0} max={20000} step={250}
           value={[maxPrice]} onValueChange={(v) => setParam("maxPrice", String(v[0] ?? 0))} />
       </div>
       <Button variant="outline" className="w-full" onClick={clearAll}>Filters wissen</Button>
+      <Button variant="hero" className="w-full gap-2" onClick={saveSearch} disabled={saving}>
+        <Bookmark className="h-4 w-4" /> Zoekopdracht bewaren
+      </Button>
     </aside>
   );
 
@@ -86,7 +104,7 @@ const Search = () => {
       <div className="bg-surface border-b border-border">
         <div className="container py-6">
           <h1 className="font-display text-2xl md:text-3xl font-bold">Zoeken</h1>
-          <p className="text-sm text-muted-foreground mt-1">{loading ? "Laden..." : `${results.length} fietsen gevonden`}</p>
+          <p className="text-sm text-muted-foreground mt-1">{isLoading ? "Laden..." : `${results.length} fietsen gevonden`}</p>
           {activeFilters.length > 0 && (
             <div className="mt-3 flex flex-wrap gap-2">
               {activeFilters.map((f) => (
@@ -127,12 +145,8 @@ const Search = () => {
 
           {open && (<div className="lg:hidden mb-6 p-5 rounded-xl border border-border bg-card">{FilterPanel}</div>)}
 
-          {loading ? (
-            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="aspect-[4/3] rounded-xl bg-muted animate-pulse" />
-              ))}
-            </div>
+          {isLoading ? (
+            <BikeGridSkeleton count={6} />
           ) : results.length === 0 ? (
             <div className="text-center py-16 border border-dashed border-border rounded-xl">
               <p className="text-muted-foreground">Geen fietsen gevonden met deze filters.</p>
@@ -140,7 +154,7 @@ const Search = () => {
             </div>
           ) : (
             <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-              {results.map((b) => (
+              {results.map((b: Bike) => (
                 <Link key={b.id} to={`/fiets/${b.id}`}><BikeCard bike={b} /></Link>
               ))}
             </div>
