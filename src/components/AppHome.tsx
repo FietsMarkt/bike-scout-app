@@ -30,7 +30,7 @@ export const AppHome = () => {
           <span className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-indigo">
             <Bike className="h-5 w-5 text-primary-foreground" />
           </span>
-          <span>Fiets<span className="text-primary">Markt</span></span>
+          <span>Fiets<span style={{ color: "hsl(239 84% 60%)" }}>Markt</span></span>
         </div>
 
         <button
