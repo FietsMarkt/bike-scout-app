@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Trash2, Tag, MapPin, Calendar, Gauge, Bike as BikeIcon, Zap } from "lucide-react";
 import { Input } from "@/components/ui/input";
