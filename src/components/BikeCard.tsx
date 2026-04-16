@@ -2,6 +2,7 @@ import { Heart, MapPin, Calendar, Gauge, Zap } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { useFavorites } from "@/contexts/FavoritesContext";
+import { getOptimizedImage } from "@/lib/image";
 
 export type Bike = {
   id: string;
@@ -35,7 +36,7 @@ export const BikeCard = ({ bike }: { bike: Bike }) => {
     <article className="group rounded-xl bg-card border border-border overflow-hidden shadow-card hover:shadow-elevated hover:-translate-y-0.5 transition-smooth h-full">
       <div className="relative aspect-[4/3] overflow-hidden bg-muted">
         <img
-          src={bike.image}
+          src={getOptimizedImage(bike.image, 600)}
           alt={bike.title}
           loading="lazy"
           className="h-full w-full object-cover group-hover:scale-105 transition-smooth"

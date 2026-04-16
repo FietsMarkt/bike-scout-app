@@ -1,11 +1,13 @@
-import { Bike, Search, Heart, User, Menu, Plus, X, LogOut, LayoutGrid } from "lucide-react";
+import { Bike, Search, Heart, User, Menu, Plus, X, LogOut, LayoutGrid, MessageSquare, Bookmark } from "lucide-react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { PushOptIn } from "@/components/PushOptIn";
+import { supabase } from "@/integrations/supabase/client";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -16,6 +18,25 @@ export const Header = () => {
   const { t } = useTranslation();
   const nav = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [unread, setUnread] = useState(0);
+
+  useEffect(() => {
+    if (!user) { setUnread(0); return; }
+    const load = async () => {
+      const { count: c } = await supabase
+        .from("messages")
+        .select("id, conversations!inner(buyer_id, seller_id)", { count: "exact", head: true })
+        .neq("sender_id", user.id)
+        .is("read_at", null);
+      setUnread(c ?? 0);
+    };
+    load();
+    const channel = supabase
+      .channel("hdr-msgs")
+      .on("postgres_changes", { event: "*", schema: "public", table: "messages" }, load)
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [user]);
 
   const navLinks = [
     { label: t("nav.buyBikes"), to: "/zoeken" },
@@ -58,6 +79,18 @@ export const Header = () => {
               <Search className="h-5 w-5" />
             </Button>
           </Link>
+          {user && (
+            <Link to="/berichten" className="relative hidden sm:inline-flex" aria-label="Berichten">
+              <Button variant="ghost" size="icon" className="text-header-foreground hover:bg-white/10 hover:text-header-foreground">
+                <MessageSquare className="h-5 w-5" />
+              </Button>
+              {unread > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 grid min-w-5 h-5 px-1 place-items-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
+                  {unread}
+                </span>
+              )}
+            </Link>
+          )}
           <Link to="/favorieten" className="relative hidden sm:inline-flex">
             <Button variant="ghost" size="icon" className="text-header-foreground hover:bg-white/10 hover:text-header-foreground">
               <Heart className="h-5 w-5" />
@@ -69,6 +102,7 @@ export const Header = () => {
             )}
           </Link>
 
+          <PushOptIn variant="compact" />
           <LanguageSwitcher />
 
           {user ? (
@@ -83,7 +117,9 @@ export const Header = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 bg-card">
                 <DropdownMenuItem asChild><Link to="/mijn-fietsen"><LayoutGrid className="h-4 w-4 mr-2" /> {t("nav.myAds")}</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/berichten"><MessageSquare className="h-4 w-4 mr-2" /> Berichten {unread > 0 && <span className="ml-auto rounded-full bg-primary text-primary-foreground px-1.5 text-[10px] font-bold">{unread}</span>}</Link></DropdownMenuItem>
                 <DropdownMenuItem asChild><Link to="/favorieten"><Heart className="h-4 w-4 mr-2" /> {t("nav.favorites")}</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/zoekopdrachten"><Bookmark className="h-4 w-4 mr-2" /> Bewaarde zoekopdrachten</Link></DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}><LogOut className="h-4 w-4 mr-2" /> {t("nav.logout")}</DropdownMenuItem>
               </DropdownMenuContent>
@@ -124,6 +160,13 @@ export const Header = () => {
             </Link>
             {user ? (
               <>
+                <Link to="/berichten" onClick={() => setMobileOpen(false)} className="px-3 py-3 rounded-md text-sm font-medium text-header-foreground/90 hover:bg-white/10 inline-flex items-center justify-between">
+                  <span className="inline-flex items-center gap-2"><MessageSquare className="h-4 w-4" /> Berichten</span>
+                  {unread > 0 && <span className="rounded-full bg-primary px-2 text-xs font-bold">{unread}</span>}
+                </Link>
+                <Link to="/zoekopdrachten" onClick={() => setMobileOpen(false)} className="px-3 py-3 rounded-md text-sm font-medium text-header-foreground/90 hover:bg-white/10 inline-flex items-center gap-2">
+                  <Bookmark className="h-4 w-4" /> Bewaarde zoekopdrachten
+                </Link>
                 <Link to="/mijn-fietsen" onClick={() => setMobileOpen(false)} className="px-3 py-3 rounded-md text-sm font-medium text-header-foreground/90 hover:bg-white/10 inline-flex items-center gap-2">
                   <LayoutGrid className="h-4 w-4" /> {t("nav.myAds")}
                 </Link>

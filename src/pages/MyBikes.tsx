@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { BikeCard, type Bike } from "@/components/BikeCard";
+import { BikeCard } from "@/components/BikeCard";
+import { BikeGridSkeleton } from "@/components/BikeCardSkeleton";
 import { useAuth } from "@/contexts/AuthContext";
-import { fetchMyBikes } from "@/lib/bikes";
+import { useMyBikes } from "@/hooks/useBikes";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Trash2 } from "lucide-react";
@@ -13,20 +15,19 @@ const MyBikes = () => {
   const { user, loading: authLoading } = useAuth();
   const nav = useNavigate();
   const { toast } = useToast();
-  const [list, setList] = useState<Bike[]>([]);
-  const [loading, setLoading] = useState(true);
+  const qc = useQueryClient();
+  const { data: list = [], isLoading } = useMyBikes(user?.id);
 
   useEffect(() => {
-    if (authLoading) return;
-    if (!user) { nav("/inloggen"); return; }
-    fetchMyBikes(user.id).then(setList).finally(() => setLoading(false));
+    if (!authLoading && !user) nav("/inloggen");
   }, [user, authLoading, nav]);
 
   const remove = async (id: string) => {
     if (!confirm("Weet je zeker dat je deze advertentie wilt verwijderen?")) return;
     const { error } = await supabase.from("bikes").delete().eq("id", id);
     if (error) { toast({ title: "Verwijderen mislukt", variant: "destructive" }); return; }
-    setList((prev) => prev.filter((b) => b.id !== id));
+    qc.invalidateQueries({ queryKey: ["my-bikes", user?.id] });
+    qc.invalidateQueries({ queryKey: ["bikes"] });
     toast({ title: "Advertentie verwijderd" });
   };
 
@@ -36,12 +37,14 @@ const MyBikes = () => {
         <div className="flex items-end justify-between gap-3 flex-wrap">
           <div>
             <h1 className="font-display text-3xl font-extrabold">Mijn advertenties</h1>
-            <p className="text-sm text-muted-foreground mt-1">{loading ? "Laden..." : `${list.length} advertenties`}</p>
+            <p className="text-sm text-muted-foreground mt-1">{isLoading ? "Laden..." : `${list.length} advertenties`}</p>
           </div>
           <Link to="/plaatsen"><Button variant="hero" className="gap-1"><Plus className="h-4 w-4" /> Nieuwe advertentie</Button></Link>
         </div>
 
-        {!loading && list.length === 0 ? (
+        {isLoading ? (
+          <div className="mt-8"><BikeGridSkeleton count={4} /></div>
+        ) : list.length === 0 ? (
           <div className="mt-10 text-center py-16 border border-dashed border-border rounded-2xl">
             <h2 className="font-display text-lg font-bold">Nog geen advertenties</h2>
             <p className="text-sm text-muted-foreground mt-1">Plaats je eerste fiets en bereik duizenden kopers.</p>

@@ -13,9 +13,15 @@ import PlaceBike from "./pages/PlaceBike.tsx";
 import Favorites from "./pages/Favorites.tsx";
 import MyBikes from "./pages/MyBikes.tsx";
 import Login from "./pages/Login.tsx";
+import Messages from "./pages/Messages.tsx";
+import Conversation from "./pages/Conversation.tsx";
+import SellerProfile from "./pages/SellerProfile.tsx";
+import SavedSearches from "./pages/SavedSearches.tsx";
 import { Dealers, Magazine, SellGuide } from "./pages/StaticPages.tsx";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { staleTime: 30_000, refetchOnWindowFocus: false } },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -32,6 +38,10 @@ const App = () => (
               <Route path="/plaatsen" element={<PlaceBike />} />
               <Route path="/favorieten" element={<Favorites />} />
               <Route path="/mijn-fietsen" element={<MyBikes />} />
+              <Route path="/berichten" element={<Messages />} />
+              <Route path="/berichten/:id" element={<Conversation />} />
+              <Route path="/verkoper/:id" element={<SellerProfile />} />
+              <Route path="/zoekopdrachten" element={<SavedSearches />} />
               <Route path="/inloggen" element={<Login />} />
               <Route path="/dealers" element={<Dealers />} />
               <Route path="/magazine" element={<Magazine />} />
