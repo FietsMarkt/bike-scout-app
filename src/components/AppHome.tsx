@@ -100,7 +100,11 @@ export const AppHome = () => {
   }, [deal]);
 
   return (
-    <div className="pb-2 bg-background min-h-screen">
+    <div
+      className="pb-2 bg-background min-h-screen"
+      style={{ transform: `translateY(${pull}px)`, transition: pull === 0 ? "transform 0.25s ease" : undefined }}
+    >
+      <PullIndicator pull={pull} threshold={threshold} refreshing={refreshing} />
       {/* HEADER */}
       <section
         className="bg-background px-5 pb-5 border-b border-border/40 relative"
@@ -140,14 +144,15 @@ export const AppHome = () => {
             onClick={() => nav(`/fiets/${deal.id}`)}
             className="w-full text-left rounded-3xl overflow-hidden bg-card border border-border shadow-elevated active:scale-[0.99] transition-transform relative"
           >
-            <div className="relative aspect-[16/10] bg-muted">
-              <img
+            <div className="relative aspect-[16/10]">
+              <BlurImage
                 src={getOptimizedImage(deal.images?.[0] ?? "", 800)}
                 alt={deal.title}
                 className="w-full h-full object-cover"
+                containerClassName="absolute inset-0"
               />
               {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent pointer-events-none" />
               {/* Discount badge */}
               <div className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-destructive text-destructive-foreground px-3 py-1.5 text-xs font-extrabold shadow-lg">
                 <TrendingDown className="h-3.5 w-3.5" strokeWidth={2.5} />
@@ -193,12 +198,12 @@ export const AppHome = () => {
                   onClick={() => nav(`/fiets/${b.id}`)}
                   className="rounded-2xl bg-card border border-border overflow-hidden text-left active:scale-[0.98] transition-transform shadow-card"
                 >
-                  <div className="relative aspect-[4/3] bg-muted">
-                    <img
+                  <div className="relative aspect-[4/3]">
+                    <BlurImage
                       src={getOptimizedImage(b.image, 400)}
                       alt={b.title}
-                      loading="lazy"
                       className="w-full h-full object-cover"
+                      containerClassName="absolute inset-0"
                     />
                     <button
                       onClick={(ev) => {
@@ -206,7 +211,7 @@ export const AppHome = () => {
                         ev.stopPropagation();
                         fav.toggle(b.id);
                       }}
-                      className="absolute top-2 right-2 grid h-8 w-8 place-items-center rounded-full bg-card/90 backdrop-blur"
+                      className="absolute top-2 right-2 grid h-8 w-8 place-items-center rounded-full bg-card/90 backdrop-blur z-10"
                       aria-label="Favoriet"
                     >
                       <Heart className={`h-4 w-4 ${isFav ? "fill-primary text-primary" : ""}`} />
