@@ -1,56 +1,68 @@
-import { bikes as seed } from "@/data/bikes";
+import { supabase } from "@/integrations/supabase/client";
 import type { Bike } from "@/components/BikeCard";
 
-const STORAGE_KEY = "fietsmarkt:userBikes";
-
-export const getUserBikes = (): Bike[] => {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as Bike[]) : [];
-  } catch { return []; }
-};
-
-export const saveUserBike = (b: Bike) => {
-  const list = getUserBikes();
-  list.unshift(b);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-};
-
-export const getAllBikes = (): Bike[] => [...getUserBikes(), ...seed];
-
-export const getBikeById = (id: string): Bike | undefined =>
-  getAllBikes().find((b) => b.id === id);
+const rowToBike = (r: Record<string, unknown>): Bike => ({
+  id: r.id as string,
+  title: r.title as string,
+  subtitle: (r.subtitle as string) ?? (r.type as string),
+  price: r.price as number,
+  year: r.year as number,
+  km: (r.km as number | null) ?? undefined,
+  motor: (r.motor as string | null) ?? undefined,
+  location: r.city as string,
+  image: ((r.images as string[] | null) ?? [])[0] ?? "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=900",
+  badge: undefined,
+  dealer: false,
+});
 
 export type BikeFilters = {
   q?: string;
   type?: string;
   brand?: string;
   maxPrice?: number;
-  postcode?: string;
   sort?: "relevance" | "price-asc" | "price-desc" | "year-desc" | "km-asc";
 };
 
-export const filterBikes = (list: Bike[], f: BikeFilters): Bike[] => {
-  let out = list;
-  if (f.q) {
-    const q = f.q.toLowerCase();
-    out = out.filter((b) => `${b.title} ${b.subtitle} ${b.location}`.toLowerCase().includes(q));
-  }
-  if (f.type && f.type !== "Alle types") {
-    const t = f.type.toLowerCase();
-    out = out.filter((b) => `${b.title} ${b.subtitle}`.toLowerCase().includes(t.replace("fiets", "")));
-  }
-  if (f.brand && f.brand !== "Alle merken") {
-    out = out.filter((b) => b.title.toLowerCase().includes(f.brand!.toLowerCase()));
-  }
-  if (f.maxPrice && f.maxPrice > 0) {
-    out = out.filter((b) => b.price <= f.maxPrice!);
-  }
+export const fetchBikes = async (f: BikeFilters = {}): Promise<Bike[]> => {
+  let q = supabase.from("bikes").select("*").eq("status", "active");
+  if (f.type && f.type !== "Alle types") q = q.eq("type", f.type);
+  if (f.brand && f.brand !== "Alle merken") q = q.eq("brand", f.brand);
+  if (f.maxPrice && f.maxPrice > 0) q = q.lte("price", f.maxPrice);
+  if (f.q) q = q.or(`title.ilike.%${f.q}%,model.ilike.%${f.q}%,brand.ilike.%${f.q}%,city.ilike.%${f.q}%`);
+
   switch (f.sort) {
-    case "price-asc":  out = [...out].sort((a, b) => a.price - b.price); break;
-    case "price-desc": out = [...out].sort((a, b) => b.price - a.price); break;
-    case "year-desc":  out = [...out].sort((a, b) => b.year - a.year); break;
-    case "km-asc":     out = [...out].sort((a, b) => (a.km ?? 0) - (b.km ?? 0)); break;
+    case "price-asc":  q = q.order("price", { ascending: true }); break;
+    case "price-desc": q = q.order("price", { ascending: false }); break;
+    case "year-desc":  q = q.order("year", { ascending: false }); break;
+    case "km-asc":     q = q.order("km", { ascending: true, nullsFirst: false }); break;
+    default:           q = q.order("created_at", { ascending: false });
   }
-  return out;
+  const { data } = await q.limit(100);
+  return (data ?? []).map(rowToBike);
+};
+
+export const fetchBikeById = async (id: string) => {
+  const { data } = await supabase.from("bikes").select("*").eq("id", id).maybeSingle();
+  if (!data) return null;
+  return { bike: rowToBike(data), raw: data as Record<string, unknown> };
+};
+
+export const fetchMyBikes = async (userId: string): Promise<Bike[]> => {
+  const { data } = await supabase
+    .from("bikes")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+  return (data ?? []).map(rowToBike);
+};
+
+export const fetchFavoriteBikes = async (userId: string): Promise<Bike[]> => {
+  const { data } = await supabase
+    .from("favorites")
+    .select("bikes(*)")
+    .eq("user_id", userId);
+  return (data ?? [])
+    .map((r) => (r as { bikes: Record<string, unknown> }).bikes)
+    .filter(Boolean)
+    .map(rowToBike);
 };

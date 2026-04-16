@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
@@ -6,13 +6,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { BIKE_TYPES, BIKE_BRANDS } from "@/lib/constants";
-import { saveUserBike } from "@/lib/bikes";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, Image as ImageIcon } from "lucide-react";
+import { Upload, Image as ImageIcon, X } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const PlaceBike = () => {
   const nav = useNavigate();
   const { toast } = useToast();
+  const { user, loading } = useAuth();
   const [type, setType] = useState("Racefiets");
   const [brand, setBrand] = useState("Trek");
   const [model, setModel] = useState("");
@@ -21,33 +23,82 @@ const PlaceBike = () => {
   const [price, setPrice] = useState<number>(0);
   const [city, setCity] = useState("");
   const [description, setDescription] = useState("");
-  const [imageDataUrl, setImageDataUrl] = useState<string>("");
+  const [files, setFiles] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<string[]>([]);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      toast({ title: "Log eerst in", description: "Je moet ingelogd zijn om een fiets te plaatsen." });
+      nav("/inloggen");
+    }
+  }, [user, loading, nav, toast]);
 
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => setImageDataUrl(String(reader.result));
-    reader.readAsDataURL(file);
+    const newFiles = Array.from(e.target.files ?? []).slice(0, 8 - files.length);
+    setFiles((prev) => [...prev, ...newFiles]);
+    newFiles.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = () => setPreviews((p) => [...p, String(reader.result)]);
+      reader.readAsDataURL(file);
+    });
   };
 
-  const submit = (e: React.FormEvent) => {
+  const removeImage = (i: number) => {
+    setFiles((p) => p.filter((_, idx) => idx !== i));
+    setPreviews((p) => p.filter((_, idx) => idx !== i));
+  };
+
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) return;
     if (!brand || !model || !price || !city) {
       toast({ title: "Vul alle verplichte velden in", variant: "destructive" });
       return;
     }
-    const id = `user-${Date.now()}`;
-    saveUserBike({
-      id,
-      title: `${brand} ${model}`,
-      subtitle: `${type}${description ? ` · ${description.slice(0, 40)}` : ""}`,
-      price, year, km, location: city,
-      image: imageDataUrl || "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=900",
-      badge: "Nieuw",
-    });
-    toast({ title: "Fiets geplaatst!", description: "Je advertentie staat live." });
-    nav(`/fiets/${id}`);
+    setBusy(true);
+    try {
+      const imageUrls: string[] = [];
+      for (const file of files) {
+        const ext = file.name.split(".").pop() ?? "jpg";
+        const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        const { error: upErr } = await supabase.storage.from("bike-photos").upload(path, file);
+        if (upErr) throw upErr;
+        const { data } = supabase.storage.from("bike-photos").getPublicUrl(path);
+        imageUrls.push(data.publicUrl);
+      }
+      if (imageUrls.length === 0) {
+        imageUrls.push("https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=900");
+      }
+
+      const { data: row, error } = await supabase
+        .from("bikes")
+        .insert({
+          user_id: user.id,
+          type, brand, model,
+          title: `${brand} ${model}`,
+          subtitle: type,
+          description,
+          price, year, km,
+          city,
+          images: imageUrls,
+          status: "active",
+        })
+        .select("id")
+        .single();
+      if (error) throw error;
+
+      toast({ title: "Fiets geplaatst!", description: "Je advertentie staat live." });
+      nav(`/fiets/${row.id}`);
+    } catch (err) {
+      toast({
+        title: "Plaatsen mislukt",
+        description: err instanceof Error ? err.message : "Probeer het opnieuw",
+        variant: "destructive",
+      });
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -101,21 +152,32 @@ const PlaceBike = () => {
           </section>
 
           <section className="rounded-2xl border border-border bg-card p-6 shadow-card">
-            <h2 className="font-display text-lg font-bold mb-4">Foto's</h2>
-            <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-border rounded-xl p-8 cursor-pointer hover:border-primary hover:bg-primary-soft transition-smooth">
-              {imageDataUrl ? (
-                <img src={imageDataUrl} alt="Voorbeeld" className="max-h-64 rounded-lg" />
-              ) : (
-                <>
-                  <span className="grid h-12 w-12 place-items-center rounded-full bg-primary-soft text-primary">
-                    <Upload className="h-6 w-6" />
-                  </span>
-                  <span className="font-semibold">Klik om foto te uploaden</span>
-                  <span className="text-xs text-muted-foreground">JPG of PNG, max 10MB</span>
-                </>
-              )}
-              <input type="file" accept="image/*" className="hidden" onChange={handleImage} />
-            </label>
+            <h2 className="font-display text-lg font-bold mb-4">Foto's <span className="text-xs font-normal text-muted-foreground">(max 8)</span></h2>
+
+            {previews.length > 0 && (
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-4">
+                {previews.map((src, i) => (
+                  <div key={i} className="relative aspect-square rounded-lg overflow-hidden bg-muted group">
+                    <img src={src} alt={`Foto ${i + 1}`} className="h-full w-full object-cover" />
+                    <button type="button" onClick={() => removeImage(i)}
+                      className="absolute top-1 right-1 grid h-6 w-6 place-items-center rounded-full bg-foreground/80 text-background opacity-0 group-hover:opacity-100 transition-smooth">
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {previews.length < 8 && (
+              <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-border rounded-xl p-8 cursor-pointer hover:border-primary hover:bg-primary-soft transition-smooth">
+                <span className="grid h-12 w-12 place-items-center rounded-full bg-primary-soft text-primary">
+                  <Upload className="h-6 w-6" />
+                </span>
+                <span className="font-semibold">Klik om foto's te uploaden</span>
+                <span className="text-xs text-muted-foreground">JPG of PNG · meerdere foto's mogelijk</span>
+                <input type="file" accept="image/*" multiple className="hidden" onChange={handleImage} />
+              </label>
+            )}
           </section>
         </div>
 
@@ -123,8 +185,8 @@ const PlaceBike = () => {
           <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
             <h3 className="font-display font-bold mb-3">Voorbeeld</h3>
             <div className="aspect-[4/3] rounded-lg bg-muted overflow-hidden flex items-center justify-center">
-              {imageDataUrl
-                ? <img src={imageDataUrl} alt="" className="h-full w-full object-cover" />
+              {previews[0]
+                ? <img src={previews[0]} alt="" className="h-full w-full object-cover" />
                 : <ImageIcon className="h-10 w-10 text-muted-foreground" />}
             </div>
             <div className="mt-3">
@@ -133,7 +195,9 @@ const PlaceBike = () => {
               <p className="font-display text-lg font-extrabold text-primary mt-1">€ {price ? price.toLocaleString("nl-NL") : "0"}</p>
             </div>
           </div>
-          <Button type="submit" variant="hero" size="lg" className="w-full">Advertentie plaatsen</Button>
+          <Button type="submit" variant="hero" size="lg" className="w-full" disabled={busy}>
+            {busy ? "Bezig met plaatsen..." : "Advertentie plaatsen"}
+          </Button>
           <p className="text-xs text-muted-foreground text-center">Door te plaatsen ga je akkoord met onze voorwaarden.</p>
         </aside>
       </form>

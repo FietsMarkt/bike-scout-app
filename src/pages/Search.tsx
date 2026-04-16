@@ -1,18 +1,20 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Layout } from "@/components/Layout";
-import { BikeCard } from "@/components/BikeCard";
+import { BikeCard, type Bike } from "@/components/BikeCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { BIKE_TYPES, BIKE_BRANDS } from "@/lib/constants";
-import { filterBikes, getAllBikes } from "@/lib/bikes";
+import { fetchBikes } from "@/lib/bikes";
 import { SlidersHorizontal, X } from "lucide-react";
 
 const Search = () => {
   const [params, setParams] = useSearchParams();
   const [open, setOpen] = useState(false);
+  const [results, setResults] = useState<Bike[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const q = params.get("q") ?? "";
   const type = params.get("type") ?? "Alle types";
@@ -31,10 +33,12 @@ const Search = () => {
     setParams(next);
   };
 
-  const results = useMemo(
-    () => filterBikes(getAllBikes(), { q, type, brand, maxPrice, sort }),
-    [q, type, brand, maxPrice, sort],
-  );
+  useEffect(() => {
+    setLoading(true);
+    fetchBikes({ q, type, brand, maxPrice, sort })
+      .then(setResults)
+      .finally(() => setLoading(false));
+  }, [q, type, brand, maxPrice, sort]);
 
   useEffect(() => { document.title = `Zoeken${q ? ` · ${q}` : ""} | FietsMarkt`; }, [q]);
 
@@ -70,12 +74,8 @@ const Search = () => {
         <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
           Max prijs: {maxPrice > 0 ? `€ ${maxPrice.toLocaleString("nl-NL")}` : "geen limiet"}
         </label>
-        <Slider
-          className="mt-3"
-          min={0} max={20000} step={250}
-          value={[maxPrice]}
-          onValueChange={(v) => setParam("maxPrice", String(v[0] ?? 0))}
-        />
+        <Slider className="mt-3" min={0} max={20000} step={250}
+          value={[maxPrice]} onValueChange={(v) => setParam("maxPrice", String(v[0] ?? 0))} />
       </div>
       <Button variant="outline" className="w-full" onClick={clearAll}>Filters wissen</Button>
     </aside>
@@ -86,7 +86,7 @@ const Search = () => {
       <div className="bg-surface border-b border-border">
         <div className="container py-6">
           <h1 className="font-display text-2xl md:text-3xl font-bold">Zoeken</h1>
-          <p className="text-sm text-muted-foreground mt-1">{results.length} fietsen gevonden</p>
+          <p className="text-sm text-muted-foreground mt-1">{loading ? "Laden..." : `${results.length} fietsen gevonden`}</p>
           {activeFilters.length > 0 && (
             <div className="mt-3 flex flex-wrap gap-2">
               {activeFilters.map((f) => (
@@ -115,7 +115,7 @@ const Search = () => {
               <Select value={sort} onValueChange={(v) => setParam("sort", v)}>
                 <SelectTrigger className="h-9 w-[180px]"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="relevance">Relevantie</SelectItem>
+                  <SelectItem value="relevance">Nieuwste</SelectItem>
                   <SelectItem value="price-asc">Prijs (laag → hoog)</SelectItem>
                   <SelectItem value="price-desc">Prijs (hoog → laag)</SelectItem>
                   <SelectItem value="year-desc">Nieuwste bouwjaar</SelectItem>
@@ -125,13 +125,15 @@ const Search = () => {
             </div>
           </div>
 
-          {open && (
-            <div className="lg:hidden mb-6 p-5 rounded-xl border border-border bg-card">
-              {FilterPanel}
-            </div>
-          )}
+          {open && (<div className="lg:hidden mb-6 p-5 rounded-xl border border-border bg-card">{FilterPanel}</div>)}
 
-          {results.length === 0 ? (
+          {loading ? (
+            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="aspect-[4/3] rounded-xl bg-muted animate-pulse" />
+              ))}
+            </div>
+          ) : results.length === 0 ? (
             <div className="text-center py-16 border border-dashed border-border rounded-xl">
               <p className="text-muted-foreground">Geen fietsen gevonden met deze filters.</p>
               <Button variant="outline" className="mt-4" onClick={clearAll}>Wis filters</Button>
