@@ -1,32 +1,53 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/Layout";
-import { BikeCard } from "@/components/BikeCard";
+import { BikeCard, type Bike } from "@/components/BikeCard";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
-import { getAllBikes } from "@/lib/bikes";
+import { fetchFavoriteBikes } from "@/lib/bikes";
 import { Heart } from "lucide-react";
 
 const Favorites = () => {
-  const { ids, clear } = useFavorites();
+  const { user, loading: authLoading } = useAuth();
+  const { ids } = useFavorites();
+  const [list, setList] = useState<Bike[]>([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => { document.title = "Mijn favorieten | FietsMarkt"; }, []);
 
-  const list = useMemo(() => getAllBikes().filter((b) => ids.includes(b.id)), [ids]);
+  useEffect(() => {
+    if (!user) { setList([]); setLoading(false); return; }
+    setLoading(true);
+    fetchFavoriteBikes(user.id).then(setList).finally(() => setLoading(false));
+  }, [user, ids.length]);
+
+  if (authLoading) return <Layout><div className="container py-20 text-center text-muted-foreground">Laden…</div></Layout>;
+
+  if (!user) {
+    return (
+      <Layout>
+        <div className="container py-20 text-center max-w-md mx-auto">
+          <span className="grid h-14 w-14 mx-auto place-items-center rounded-full bg-primary-soft text-primary">
+            <Heart className="h-6 w-6" />
+          </span>
+          <h1 className="mt-4 font-display text-2xl font-bold">Log in voor favorieten</h1>
+          <p className="text-muted-foreground mt-2">Maak een account aan om fietsen te bewaren en terug te vinden.</p>
+          <Link to="/inloggen"><Button variant="hero" className="mt-5">Inloggen of registreren</Button></Link>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
       <div className="container py-10">
-        <div className="flex items-end justify-between gap-3">
-          <div>
-            <h1 className="font-display text-3xl font-extrabold">Mijn favorieten</h1>
-            <p className="text-sm text-muted-foreground mt-1">{list.length} bewaarde fietsen</p>
-          </div>
-          {list.length > 0 && (
-            <Button variant="outline" onClick={clear}>Alles verwijderen</Button>
-          )}
+        <div>
+          <h1 className="font-display text-3xl font-extrabold">Mijn favorieten</h1>
+          <p className="text-sm text-muted-foreground mt-1">{loading ? "Laden..." : `${list.length} bewaarde fietsen`}</p>
         </div>
 
-        {list.length === 0 ? (
+        {!loading && list.length === 0 ? (
           <div className="mt-10 text-center py-16 border border-dashed border-border rounded-2xl">
             <span className="grid h-14 w-14 mx-auto place-items-center rounded-full bg-primary-soft text-primary">
               <Heart className="h-6 w-6" />
