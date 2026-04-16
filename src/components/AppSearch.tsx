@@ -238,42 +238,6 @@ const FilterRow = ({
   </Sheet>
 );
 
-const ChipGrid = ({
-  options, current, onPick,
-}: {
-  options: { label: string; value: number }[];
-  current: number;
-  onPick: (v: number) => void;
-}) => (
-  <div className="grid grid-cols-2 gap-2">
-    {options.map((o) => {
-      const active = current === o.value;
-      return (
-        <button
-          key={o.label}
-          onClick={() => onPick(o.value)}
-          className={`px-3 py-3 rounded-xl border text-sm font-semibold transition-colors ${
-            active
-              ? "bg-primary text-primary-foreground border-primary"
-              : "bg-card/10 border-border/20 hover:bg-card/20"
-          }`}
-        >
-          {o.label}
-        </button>
-      );
-    })}
-  </div>
-);
-
-const PRICE_CHIPS = [
-  { label: "Alle", value: 0 },
-  { label: "tot € 500", value: 500 },
-  { label: "tot € 1.000", value: 1000 },
-  { label: "tot € 2.500", value: 2500 },
-  { label: "tot € 5.000", value: 5000 },
-  { label: "tot € 10.000", value: 10000 },
-];
-
 const PriceRow = ({ maxPrice, onChange }: { maxPrice: number; onChange: (v: number) => void }) => (
   <Sheet>
     <SheetTrigger asChild>
@@ -290,11 +254,25 @@ const PriceRow = ({ maxPrice, onChange }: { maxPrice: number; onChange: (v: numb
         <ChevronRight className="h-5 w-5 opacity-60" />
       </button>
     </SheetTrigger>
-    <SheetContent side="bottom" className="rounded-t-2xl p-4 pt-3">
-      <SheetHeader><SheetTitle className="text-base">Maximale prijs</SheetTitle></SheetHeader>
-      <div className="mt-3">
-        <ChipGrid options={PRICE_CHIPS} current={maxPrice} onPick={onChange} />
+    <SheetContent side="bottom" className="rounded-t-2xl p-3 pt-2">
+      <SheetHeader className="space-y-0">
+        <SheetTitle className="text-sm font-semibold text-muted-foreground">Maximale prijs</SheetTitle>
+      </SheetHeader>
+      <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
+        <span>€ 0</span>
+        <span className="font-display font-bold text-foreground text-sm">
+          {maxPrice > 0 ? `tot € ${maxPrice.toLocaleString("nl-BE")}` : "Geen limiet"}
+        </span>
+        <span>€ 20.000</span>
       </div>
+      <Slider
+        className="mt-2"
+        min={0}
+        max={20000}
+        step={250}
+        value={[maxPrice]}
+        onValueChange={(v) => onChange(v[0] ?? 0)}
+      />
     </SheetContent>
   </Sheet>
 );
@@ -317,9 +295,11 @@ const RowShell = ({
         <ChevronRight className="h-5 w-5 opacity-60" />
       </button>
     </SheetTrigger>
-    <SheetContent side="bottom" className="rounded-t-2xl p-4 pt-3">
-      <SheetHeader><SheetTitle className="text-base">{label}</SheetTitle></SheetHeader>
-      <div className="mt-3 px-1">{children}</div>
+    <SheetContent side="bottom" className="rounded-t-2xl p-3 pt-2">
+      <SheetHeader className="space-y-0">
+        <SheetTitle className="text-sm font-semibold text-muted-foreground">{label}</SheetTitle>
+      </SheetHeader>
+      <div className="mt-1">{children}</div>
     </SheetContent>
   </Sheet>
 );
@@ -333,7 +313,6 @@ const CityRow = ({ city, onChange }: { city: string; onChange: (v: string) => vo
       autoFocus
       className="h-12"
     />
-    <p className="mt-2 text-xs text-muted-foreground">Filtert op stadsnaam.</p>
   </RowShell>
 );
 
@@ -346,7 +325,7 @@ const MotorRow = ({ motor, onChange }: { motor: string; onChange: (v: string) =>
         <button
           key={opt}
           onClick={() => onChange(opt)}
-          className={`w-full text-left px-3 py-3 rounded-lg text-sm ${
+          className={`w-full text-left px-3 py-2.5 rounded-lg text-sm ${
             motor === opt ? "bg-primary text-primary-foreground font-bold" : "hover:bg-muted"
           }`}
         >
@@ -357,40 +336,45 @@ const MotorRow = ({ motor, onChange }: { motor: string; onChange: (v: string) =>
   </RowShell>
 );
 
-const YEAR_CHIPS = [
-  { label: "Alle", value: 0 },
-  { label: "vanaf 2024", value: 2024 },
-  { label: "vanaf 2022", value: 2022 },
-  { label: "vanaf 2020", value: 2020 },
-  { label: "vanaf 2015", value: 2015 },
-  { label: "vanaf 2010", value: 2010 },
-];
-
-const YearRow = ({ minYear, onChange }: { minYear: number; onChange: (v: number) => void }) => (
-  <RowShell
-    icon={Calendar}
-    label="Bouwjaar"
-    value={minYear > 0 ? `vanaf ${minYear}` : undefined}
-  >
-    <ChipGrid options={YEAR_CHIPS} current={minYear} onPick={onChange} />
-  </RowShell>
-);
-
-const KM_CHIPS = [
-  { label: "Alle", value: 0 },
-  { label: "tot 1.000 km", value: 1000 },
-  { label: "tot 5.000 km", value: 5000 },
-  { label: "tot 10.000 km", value: 10000 },
-  { label: "tot 25.000 km", value: 25000 },
-  { label: "tot 50.000 km", value: 50000 },
-];
+const YearRow = ({ minYear, onChange }: { minYear: number; onChange: (v: number) => void }) => {
+  const currentYear = new Date().getFullYear();
+  return (
+    <RowShell icon={Calendar} label="Bouwjaar" value={minYear > 0 ? `vanaf ${minYear}` : undefined}>
+      <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <span>1990</span>
+        <span className="font-display font-bold text-foreground text-sm">
+          {minYear > 0 ? `vanaf ${minYear}` : "Alle"}
+        </span>
+        <span>{currentYear}</span>
+      </div>
+      <Slider
+        className="mt-2"
+        min={1990}
+        max={currentYear}
+        step={1}
+        value={[minYear > 0 ? minYear : 1990]}
+        onValueChange={(v) => onChange(v[0] === 1990 ? 0 : v[0] ?? 0)}
+      />
+    </RowShell>
+  );
+};
 
 const KmRow = ({ maxKm, onChange }: { maxKm: number; onChange: (v: number) => void }) => (
-  <RowShell
-    icon={Gauge}
-    label="Kilometerstand"
-    value={maxKm > 0 ? `tot ${maxKm.toLocaleString("nl-BE")} km` : undefined}
-  >
-    <ChipGrid options={KM_CHIPS} current={maxKm} onPick={onChange} />
+  <RowShell icon={Gauge} label="Kilometerstand" value={maxKm > 0 ? `tot ${maxKm.toLocaleString("nl-BE")} km` : undefined}>
+    <div className="flex items-center justify-between text-xs text-muted-foreground">
+      <span>0</span>
+      <span className="font-display font-bold text-foreground text-sm">
+        {maxKm > 0 ? `tot ${maxKm.toLocaleString("nl-BE")} km` : "Geen limiet"}
+      </span>
+      <span>50.000+</span>
+    </div>
+    <Slider
+      className="mt-2"
+      min={0}
+      max={50000}
+      step={500}
+      value={[maxKm]}
+      onValueChange={(v) => onChange(v[0] ?? 0)}
+    />
   </RowShell>
 );
