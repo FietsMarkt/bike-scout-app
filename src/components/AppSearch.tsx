@@ -254,14 +254,14 @@ const PriceRow = ({ maxPrice, onChange }: { maxPrice: number; onChange: (v: numb
         <ChevronRight className="h-5 w-5 opacity-60" />
       </button>
     </SheetTrigger>
-    <SheetContent side="bottom" className="rounded-t-2xl">
-      <SheetHeader><SheetTitle>Maximale prijs</SheetTitle></SheetHeader>
-      <div className="mt-2 px-2">
-        <div className="text-center font-display text-2xl font-extrabold">
+    <SheetContent side="bottom" className="rounded-t-2xl p-4 pt-3">
+      <SheetHeader><SheetTitle className="text-base">Maximale prijs</SheetTitle></SheetHeader>
+      <div className="mt-3 px-1">
+        <Slider min={0} max={20000} step={250}
+          value={[maxPrice]} onValueChange={(v) => onChange(v[0] ?? 0)} />
+        <div className="mt-2 text-center font-display text-base font-bold">
           {maxPrice > 0 ? `€ ${maxPrice.toLocaleString("nl-BE")}` : "Geen limiet"}
         </div>
-        <Slider className="mt-3" min={0} max={20000} step={250}
-          value={[maxPrice]} onValueChange={(v) => onChange(v[0] ?? 0)} />
       </div>
     </SheetContent>
   </Sheet>
@@ -285,9 +285,9 @@ const RowShell = ({
         <ChevronRight className="h-5 w-5 opacity-60" />
       </button>
     </SheetTrigger>
-    <SheetContent side="bottom" className="rounded-t-2xl">
-      <SheetHeader><SheetTitle>{label}</SheetTitle></SheetHeader>
-      <div className="mt-4 px-1">{children}</div>
+    <SheetContent side="bottom" className="rounded-t-2xl p-4 pt-3">
+      <SheetHeader><SheetTitle className="text-base">{label}</SheetTitle></SheetHeader>
+      <div className="mt-3 px-1">{children}</div>
     </SheetContent>
   </Sheet>
 );
@@ -333,11 +333,7 @@ const YearRow = ({ minYear, onChange }: { minYear: number; onChange: (v: number)
       label="Bouwjaar"
       value={minYear > 0 ? `vanaf ${minYear}` : undefined}
     >
-      <div className="text-center font-display text-xl font-extrabold">
-        {minYear > 0 ? `vanaf ${minYear}` : "Alle bouwjaren"}
-      </div>
       <Slider
-        className="mt-3"
         min={1990}
         max={currentYear}
         step={1}
@@ -346,6 +342,9 @@ const YearRow = ({ minYear, onChange }: { minYear: number; onChange: (v: number)
       />
       <div className="mt-2 flex justify-between text-xs text-muted-foreground">
         <span>1990</span>
+        <span className="font-display font-bold text-foreground text-sm">
+          {minYear > 0 ? `vanaf ${minYear}` : "Alle"}
+        </span>
         <span>{currentYear}</span>
       </div>
     </RowShell>
@@ -358,11 +357,7 @@ const KmRow = ({ maxKm, onChange }: { maxKm: number; onChange: (v: number) => vo
     label="Kilometerstand"
     value={maxKm > 0 ? `tot ${maxKm.toLocaleString("nl-BE")} km` : undefined}
   >
-    <div className="text-center font-display text-xl font-extrabold">
-      {maxKm > 0 ? `tot ${maxKm.toLocaleString("nl-BE")} km` : "Geen limiet"}
-    </div>
     <Slider
-      className="mt-3"
       min={0}
       max={50000}
       step={500}
@@ -371,6 +366,9 @@ const KmRow = ({ maxKm, onChange }: { maxKm: number; onChange: (v: number) => vo
     />
     <div className="mt-2 flex justify-between text-xs text-muted-foreground">
       <span>0</span>
+      <span className="font-display font-bold text-foreground text-sm">
+        {maxKm > 0 ? `tot ${maxKm.toLocaleString("nl-BE")} km` : "Geen limiet"}
+      </span>
       <span>50.000+</span>
     </div>
   </RowShell>
