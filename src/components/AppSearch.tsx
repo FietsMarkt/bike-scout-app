@@ -358,11 +358,11 @@ const KmRow = ({ maxKm, onChange }: { maxKm: number; onChange: (v: number) => vo
     label="Kilometerstand"
     value={maxKm > 0 ? `tot ${maxKm.toLocaleString("nl-BE")} km` : undefined}
   >
-    <div className="text-center font-display text-2xl font-extrabold">
+    <div className="text-center font-display text-xl font-extrabold">
       {maxKm > 0 ? `tot ${maxKm.toLocaleString("nl-BE")} km` : "Geen limiet"}
     </div>
     <Slider
-      className="mt-6"
+      className="mt-3"
       min={0}
       max={50000}
       step={500}
