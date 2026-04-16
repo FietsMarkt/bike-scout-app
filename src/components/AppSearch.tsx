@@ -33,10 +33,16 @@ export const AppSearch = () => {
   const type = params.get("type") ?? "Alle types";
   const brand = params.get("brand") ?? "Alle merken";
   const maxPrice = Number(params.get("maxPrice") ?? 0);
+  const city = params.get("city") ?? "";
+  const motor = params.get("motor") ?? "Alle";
+  const minYear = Number(params.get("minYear") ?? 0);
+  const maxKm = Number(params.get("maxKm") ?? 0);
   const sort = (params.get("sort") ?? "relevance") as
     "relevance" | "price-asc" | "price-desc" | "year-desc" | "km-asc";
 
-  const { data: results = [], isLoading } = useBikes({ q, type, brand, maxPrice, sort });
+  const { data: results = [], isLoading } = useBikes({
+    q, type, brand, maxPrice, city, motor, minYear, maxKm, sort,
+  });
 
   useEffect(() => {
     if (results.length === 0) return;
@@ -51,11 +57,9 @@ export const AppSearch = () => {
 
   const setParam = (key: string, value: string) => {
     const next = new URLSearchParams(params);
-    if (value && value !== "Alle types" && value !== "Alle merken" && value !== "0" && value !== "relevance") {
-      next.set(key, value);
-    } else {
-      next.delete(key);
-    }
+    const empties = ["Alle types", "Alle merken", "Alle", "0", "relevance", ""];
+    if (value && !empties.includes(value)) next.set(key, value);
+    else next.delete(key);
     setParams(next);
   };
 
