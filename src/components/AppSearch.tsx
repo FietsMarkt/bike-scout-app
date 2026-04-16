@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Trash2, Tag, MapPin, Calendar, Gauge, Bike as BikeIcon, Zap } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -266,15 +267,111 @@ const PriceRow = ({ maxPrice, onChange }: { maxPrice: number; onChange: (v: numb
   </Sheet>
 );
 
-const SimpleRow = ({ icon: Icon, label, badge }: { icon: typeof BikeIcon; label: string; badge?: string }) => (
-  <button className="w-full flex items-center gap-3 rounded-xl bg-card/10 border border-border/10 p-4 text-left opacity-60">
-    <Icon className="h-5 w-5 shrink-0" strokeWidth={1.75} />
-    <div className="flex-1 min-w-0">
-      <div className="font-display text-base font-semibold">{label}</div>
-      {badge && (
-        <div className="mt-1 inline-block rounded-md bg-card/15 px-2 py-0.5 text-xs">{badge}</div>
-      )}
+const RowShell = ({
+  icon: Icon, label, value, children,
+}: {
+  icon: typeof BikeIcon; label: string; value?: string; children: React.ReactNode;
+}) => (
+  <Sheet>
+    <SheetTrigger asChild>
+      <button className="w-full flex items-center gap-3 rounded-xl bg-card/10 border border-border/10 p-4 text-left active:bg-card/20 transition-colors">
+        <Icon className="h-5 w-5 shrink-0 opacity-90" strokeWidth={1.75} />
+        <div className="flex-1 min-w-0">
+          <div className="font-display text-base font-semibold">{label}</div>
+          {value && (
+            <div className="mt-1 inline-block rounded-md bg-card/15 px-2 py-0.5 text-xs">{value}</div>
+          )}
+        </div>
+        <ChevronRight className="h-5 w-5 opacity-60" />
+      </button>
+    </SheetTrigger>
+    <SheetContent side="bottom" className="rounded-t-2xl">
+      <SheetHeader><SheetTitle>{label}</SheetTitle></SheetHeader>
+      <div className="mt-4 px-1">{children}</div>
+    </SheetContent>
+  </Sheet>
+);
+
+const CityRow = ({ city, onChange }: { city: string; onChange: (v: string) => void }) => (
+  <RowShell icon={MapPin} label="Plaats" value={city || undefined}>
+    <Input
+      value={city}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder="bv. Antwerpen"
+      autoFocus
+      className="h-12"
+    />
+    <p className="mt-2 text-xs text-muted-foreground">Filtert op stadsnaam.</p>
+  </RowShell>
+);
+
+const MOTOR_OPTIONS = ["Alle", "E-bike", "Geen"];
+
+const MotorRow = ({ motor, onChange }: { motor: string; onChange: (v: string) => void }) => (
+  <RowShell icon={Zap} label="Motor / E-bike" value={motor !== "Alle" ? motor : undefined}>
+    <div className="space-y-1">
+      {MOTOR_OPTIONS.map((opt) => (
+        <button
+          key={opt}
+          onClick={() => onChange(opt)}
+          className={`w-full text-left px-3 py-3 rounded-lg text-sm ${
+            motor === opt ? "bg-primary text-primary-foreground font-bold" : "hover:bg-muted"
+          }`}
+        >
+          {opt}
+        </button>
+      ))}
     </div>
-    <ChevronRight className="h-5 w-5 opacity-60" />
-  </button>
+  </RowShell>
+);
+
+const YearRow = ({ minYear, onChange }: { minYear: number; onChange: (v: number) => void }) => {
+  const currentYear = new Date().getFullYear();
+  return (
+    <RowShell
+      icon={Calendar}
+      label="Bouwjaar"
+      value={minYear > 0 ? `vanaf ${minYear}` : undefined}
+    >
+      <div className="text-center font-display text-2xl font-extrabold">
+        {minYear > 0 ? `vanaf ${minYear}` : "Alle bouwjaren"}
+      </div>
+      <Slider
+        className="mt-6"
+        min={1990}
+        max={currentYear}
+        step={1}
+        value={[minYear > 0 ? minYear : 1990]}
+        onValueChange={(v) => onChange(v[0] === 1990 ? 0 : v[0] ?? 0)}
+      />
+      <div className="mt-2 flex justify-between text-xs text-muted-foreground">
+        <span>1990</span>
+        <span>{currentYear}</span>
+      </div>
+    </RowShell>
+  );
+};
+
+const KmRow = ({ maxKm, onChange }: { maxKm: number; onChange: (v: number) => void }) => (
+  <RowShell
+    icon={Gauge}
+    label="Kilometerstand"
+    value={maxKm > 0 ? `tot ${maxKm.toLocaleString("nl-BE")} km` : undefined}
+  >
+    <div className="text-center font-display text-2xl font-extrabold">
+      {maxKm > 0 ? `tot ${maxKm.toLocaleString("nl-BE")} km` : "Geen limiet"}
+    </div>
+    <Slider
+      className="mt-6"
+      min={0}
+      max={50000}
+      step={500}
+      value={[maxKm]}
+      onValueChange={(v) => onChange(v[0] ?? 0)}
+    />
+    <div className="mt-2 flex justify-between text-xs text-muted-foreground">
+      <span>0</span>
+      <span>50.000+</span>
+    </div>
+  </RowShell>
 );
