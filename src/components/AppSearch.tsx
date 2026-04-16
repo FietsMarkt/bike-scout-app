@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Trash2, Tag, MapPin, Calendar, Gauge, Bike as BikeIcon, Zap } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -167,7 +167,7 @@ export const AppSearch = () => {
           options={BIKE_TYPES} onChange={(v) => setParam("type", v)} current={type} />
 
         <FilterRow icon={Tag} label="Merk" value={brand !== "Alle merken" ? brand : undefined}
-          options={BIKE_BRANDS} onChange={(v) => setParam("brand", v)} current={brand} maxHeight />
+          options={BIKE_BRANDS} onChange={(v) => setParam("brand", v)} current={brand} searchable />
 
         <PriceRow maxPrice={maxPrice} onChange={(v) => setParam("maxPrice", String(v))} />
 
@@ -201,53 +201,79 @@ export const AppSearch = () => {
 };
 
 const FilterRow = ({
-  icon: Icon, label, value, options, onChange, current, maxHeight,
+  icon: Icon, label, value, options, onChange, current, maxHeight, searchable,
 }: {
   icon: typeof BikeIcon; label: string; value?: string;
-  options: readonly string[]; onChange: (v: string) => void; current: string; maxHeight?: boolean;
-}) => (
-  <Sheet>
-    <SheetTrigger asChild>
-      <button className="w-full flex items-center gap-3 rounded-xl bg-card/10 border border-border/10 p-4 text-left active:bg-card/20 transition-colors">
-        <Icon className="h-5 w-5 shrink-0 opacity-90" strokeWidth={1.75} />
-        <div className="flex-1 min-w-0">
-          <div className="font-display text-base font-semibold">{label}</div>
-          {value && (
-            <div className="mt-1 inline-block rounded-md bg-card/15 px-2 py-0.5 text-xs">{value}</div>
+  options: readonly string[]; onChange: (v: string) => void; current: string;
+  maxHeight?: boolean; searchable?: boolean;
+}) => {
+  const [query, setQuery] = useState("");
+  const filtered = searchable && query.trim()
+    ? options.filter((o) => o.toLowerCase().includes(query.toLowerCase()))
+    : options;
+
+  return (
+    <Sheet onOpenChange={(open) => { if (!open) setQuery(""); }}>
+      <SheetTrigger asChild>
+        <button type="button" className="w-full flex items-center gap-3 rounded-xl bg-card/10 border border-border/10 p-4 text-left active:bg-card/20 transition-colors">
+          <Icon className="h-5 w-5 shrink-0 opacity-90" strokeWidth={1.75} />
+          <div className="flex-1 min-w-0">
+            <div className="font-display text-base font-semibold">{label}</div>
+            {value && (
+              <div className="mt-1 inline-block rounded-md bg-card/15 px-2 py-0.5 text-xs">{value}</div>
+            )}
+          </div>
+          <ChevronRight className="h-5 w-5 opacity-60" />
+        </button>
+      </SheetTrigger>
+      <SheetContent side="bottom" className="rounded-t-2xl max-h-[80vh] overflow-hidden flex flex-col">
+        <SheetHeader><SheetTitle>{label}</SheetTitle></SheetHeader>
+        {searchable && (
+          <Input
+            placeholder={`Zoek ${label.toLowerCase()}...`}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="mt-3 h-11"
+            autoFocus
+          />
+        )}
+        <div className={`mt-3 space-y-1 flex-1 ${maxHeight || searchable ? "overflow-y-auto" : ""}`}>
+          {filtered.length === 0 ? (
+            <div className="text-center text-sm text-muted-foreground py-6">Geen resultaten</div>
+          ) : (
+            filtered.map((opt) => (
+              <button
+                key={opt}
+                type="button"
+                onClick={() => onChange(opt)}
+                className={`w-full text-left px-3 py-3 rounded-lg text-sm ${
+                  current === opt ? "bg-primary text-primary-foreground font-bold" : "hover:bg-muted"
+                }`}
+              >
+                {opt}
+              </button>
+            ))
           )}
         </div>
-        <ChevronRight className="h-5 w-5 opacity-60" />
-      </button>
-    </SheetTrigger>
-    <SheetContent side="bottom" className="rounded-t-2xl max-h-[70vh] overflow-y-auto">
-      <SheetHeader><SheetTitle>{label}</SheetTitle></SheetHeader>
-      <div className={`mt-4 space-y-1 ${maxHeight ? "max-h-[55vh] overflow-y-auto" : ""}`}>
-        {options.map((opt) => (
-          <button
-            key={opt}
-            onClick={() => onChange(opt)}
-            className={`w-full text-left px-3 py-3 rounded-lg text-sm ${
-              current === opt ? "bg-primary text-primary-foreground font-bold" : "hover:bg-muted"
-            }`}
-          >
-            {opt}
-          </button>
-        ))}
-      </div>
-    </SheetContent>
-  </Sheet>
-);
+      </SheetContent>
+    </Sheet>
+  );
+};
 
-const FilterTriggerButton = ({
-  label,
-  value,
-  leading,
-}: {
-  label: string;
-  value?: string;
-  leading: React.ReactNode;
-}) => (
-  <button className="w-full flex items-center gap-3 rounded-xl bg-card/10 border border-border/10 p-4 text-left active:bg-card/20 transition-colors">
+const FilterTriggerButton = React.forwardRef<
+  HTMLButtonElement,
+  {
+    label: string;
+    value?: string;
+    leading: React.ReactNode;
+  } & React.ButtonHTMLAttributes<HTMLButtonElement>
+>(({ label, value, leading, ...props }, ref) => (
+  <button
+    ref={ref}
+    type="button"
+    {...props}
+    className="w-full flex items-center gap-3 rounded-xl bg-card/10 border border-border/10 p-4 text-left active:bg-card/20 transition-colors"
+  >
     <span className="grid h-5 w-5 place-items-center shrink-0 opacity-90">{leading}</span>
     <div className="flex-1 min-w-0">
       <div className="font-display text-base font-semibold">{label}</div>
@@ -257,7 +283,8 @@ const FilterTriggerButton = ({
     </div>
     <ChevronRight className="h-5 w-5 opacity-60" />
   </button>
-);
+));
+FilterTriggerButton.displayName = "FilterTriggerButton";
 
 const SliderSheet = ({
   trigger,
