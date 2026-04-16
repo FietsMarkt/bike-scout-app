@@ -238,43 +238,84 @@ const FilterRow = ({
   </Sheet>
 );
 
-const PriceRow = ({ maxPrice, onChange }: { maxPrice: number; onChange: (v: number) => void }) => (
+const FilterTriggerButton = ({
+  label,
+  value,
+  leading,
+}: {
+  label: string;
+  value?: string;
+  leading: React.ReactNode;
+}) => (
+  <button className="w-full flex items-center gap-3 rounded-xl bg-card/10 border border-border/10 p-4 text-left active:bg-card/20 transition-colors">
+    <span className="grid h-5 w-5 place-items-center shrink-0 opacity-90">{leading}</span>
+    <div className="flex-1 min-w-0">
+      <div className="font-display text-base font-semibold">{label}</div>
+      {value && (
+        <div className="mt-1 inline-block rounded-md bg-card/15 px-2 py-0.5 text-xs">{value}</div>
+      )}
+    </div>
+    <ChevronRight className="h-5 w-5 opacity-60" />
+  </button>
+);
+
+const SliderSheet = ({
+  trigger,
+  title,
+  valueLabel,
+  minLabel,
+  maxLabel,
+  children,
+}: {
+  trigger: React.ReactNode;
+  title: string;
+  valueLabel: string;
+  minLabel: string;
+  maxLabel: string;
+  children: React.ReactNode;
+}) => (
   <Sheet>
-    <SheetTrigger asChild>
-      <button className="w-full flex items-center gap-3 rounded-xl bg-card/10 border border-border/10 p-4 text-left active:bg-card/20 transition-colors">
-        <span className="grid h-5 w-5 place-items-center text-base shrink-0 opacity-90">€</span>
-        <div className="flex-1 min-w-0">
-          <div className="font-display text-base font-semibold">Prijs</div>
-          {maxPrice > 0 && (
-            <div className="mt-1 inline-block rounded-md bg-card/15 px-2 py-0.5 text-xs">
-              tot € {maxPrice.toLocaleString("nl-BE")}
-            </div>
-          )}
-        </div>
-        <ChevronRight className="h-5 w-5 opacity-60" />
-      </button>
-    </SheetTrigger>
-    <SheetContent side="bottom" className="rounded-t-2xl p-3 pt-2">
-      <SheetHeader className="space-y-0">
-        <SheetTitle className="text-sm font-semibold text-muted-foreground">Maximale prijs</SheetTitle>
+    <SheetTrigger asChild>{trigger}</SheetTrigger>
+    <SheetContent
+      side="top"
+      className="rounded-b-3xl border-b p-4 pb-5 [&>button]:top-[calc(env(safe-area-inset-top)+1rem)]"
+      style={{ paddingTop: "calc(env(safe-area-inset-top) + 0.75rem)" }}
+    >
+      <SheetHeader className="space-y-1">
+        <SheetTitle className="text-center font-display text-2xl font-extrabold">{title}</SheetTitle>
       </SheetHeader>
-      <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
-        <span>€ 0</span>
-        <span className="font-display font-bold text-foreground text-sm">
-          {maxPrice > 0 ? `tot € ${maxPrice.toLocaleString("nl-BE")}` : "Geen limiet"}
-        </span>
-        <span>€ 20.000</span>
+      <div className="mt-3 text-center font-display text-3xl font-extrabold">{valueLabel}</div>
+      <div className="mt-4 px-1">{children}</div>
+      <div className="mt-2 flex justify-between text-xs text-muted-foreground">
+        <span>{minLabel}</span>
+        <span>{maxLabel}</span>
       </div>
-      <Slider
-        className="mt-2"
-        min={0}
-        max={20000}
-        step={250}
-        value={[maxPrice]}
-        onValueChange={(v) => onChange(v[0] ?? 0)}
-      />
     </SheetContent>
   </Sheet>
+);
+
+const PriceRow = ({ maxPrice, onChange }: { maxPrice: number; onChange: (v: number) => void }) => (
+  <SliderSheet
+    title="Prijs"
+    valueLabel={maxPrice > 0 ? `tot € ${maxPrice.toLocaleString("nl-BE")}` : "Geen limiet"}
+    minLabel="€ 0"
+    maxLabel="€ 20.000"
+    trigger={(
+      <FilterTriggerButton
+        label="Prijs"
+        value={maxPrice > 0 ? `tot € ${maxPrice.toLocaleString("nl-BE")}` : undefined}
+        leading={<span className="text-base">€</span>}
+      />
+    )}
+  >
+    <Slider
+      min={0}
+      max={20000}
+      step={250}
+      value={[maxPrice]}
+      onValueChange={(v) => onChange(v[0] ?? 0)}
+    />
+  </SliderSheet>
 );
 
 const RowShell = ({
@@ -284,22 +325,15 @@ const RowShell = ({
 }) => (
   <Sheet>
     <SheetTrigger asChild>
-      <button className="w-full flex items-center gap-3 rounded-xl bg-card/10 border border-border/10 p-4 text-left active:bg-card/20 transition-colors">
-        <Icon className="h-5 w-5 shrink-0 opacity-90" strokeWidth={1.75} />
-        <div className="flex-1 min-w-0">
-          <div className="font-display text-base font-semibold">{label}</div>
-          {value && (
-            <div className="mt-1 inline-block rounded-md bg-card/15 px-2 py-0.5 text-xs">{value}</div>
-          )}
-        </div>
-        <ChevronRight className="h-5 w-5 opacity-60" />
-      </button>
+      <FilterTriggerButton
+        label={label}
+        value={value}
+        leading={<Icon className="h-5 w-5" strokeWidth={1.75} />}
+      />
     </SheetTrigger>
-    <SheetContent side="bottom" className="rounded-t-2xl p-3 pt-2">
-      <SheetHeader className="space-y-0">
-        <SheetTitle className="text-sm font-semibold text-muted-foreground">{label}</SheetTitle>
-      </SheetHeader>
-      <div className="mt-1">{children}</div>
+    <SheetContent side="bottom" className="rounded-t-2xl p-4 pt-3">
+      <SheetHeader><SheetTitle className="text-base">{label}</SheetTitle></SheetHeader>
+      <div className="mt-3 px-1">{children}</div>
     </SheetContent>
   </Sheet>
 );
@@ -338,43 +372,52 @@ const MotorRow = ({ motor, onChange }: { motor: string; onChange: (v: string) =>
 
 const YearRow = ({ minYear, onChange }: { minYear: number; onChange: (v: number) => void }) => {
   const currentYear = new Date().getFullYear();
+
   return (
-    <RowShell icon={Calendar} label="Bouwjaar" value={minYear > 0 ? `vanaf ${minYear}` : undefined}>
-      <div className="flex items-center justify-between text-xs text-muted-foreground">
-        <span>1990</span>
-        <span className="font-display font-bold text-foreground text-sm">
-          {minYear > 0 ? `vanaf ${minYear}` : "Alle"}
-        </span>
-        <span>{currentYear}</span>
-      </div>
+    <SliderSheet
+      title="Bouwjaar"
+      valueLabel={minYear > 0 ? `vanaf ${minYear}` : "Alle"}
+      minLabel="1990"
+      maxLabel={String(currentYear)}
+      trigger={(
+        <FilterTriggerButton
+          label="Bouwjaar"
+          value={minYear > 0 ? `vanaf ${minYear}` : undefined}
+          leading={<Calendar className="h-5 w-5" strokeWidth={1.75} />}
+        />
+      )}
+    >
       <Slider
-        className="mt-2"
         min={1990}
         max={currentYear}
         step={1}
         value={[minYear > 0 ? minYear : 1990]}
         onValueChange={(v) => onChange(v[0] === 1990 ? 0 : v[0] ?? 0)}
       />
-    </RowShell>
+    </SliderSheet>
   );
 };
 
 const KmRow = ({ maxKm, onChange }: { maxKm: number; onChange: (v: number) => void }) => (
-  <RowShell icon={Gauge} label="Kilometerstand" value={maxKm > 0 ? `tot ${maxKm.toLocaleString("nl-BE")} km` : undefined}>
-    <div className="flex items-center justify-between text-xs text-muted-foreground">
-      <span>0</span>
-      <span className="font-display font-bold text-foreground text-sm">
-        {maxKm > 0 ? `tot ${maxKm.toLocaleString("nl-BE")} km` : "Geen limiet"}
-      </span>
-      <span>50.000+</span>
-    </div>
+  <SliderSheet
+    title="Kilometerstand"
+    valueLabel={maxKm > 0 ? `tot ${maxKm.toLocaleString("nl-BE")} km` : "Geen limiet"}
+    minLabel="0"
+    maxLabel="50.000+"
+    trigger={(
+      <FilterTriggerButton
+        label="Kilometerstand"
+        value={maxKm > 0 ? `tot ${maxKm.toLocaleString("nl-BE")} km` : undefined}
+        leading={<Gauge className="h-5 w-5" strokeWidth={1.75} />}
+      />
+    )}
+  >
     <Slider
-      className="mt-2"
       min={0}
       max={50000}
       step={500}
       value={[maxKm]}
       onValueChange={(v) => onChange(v[0] ?? 0)}
     />
-  </RowShell>
+  </SliderSheet>
 );
