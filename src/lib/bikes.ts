@@ -20,6 +20,10 @@ export type BikeFilters = {
   type?: string;
   brand?: string;
   maxPrice?: number;
+  city?: string;
+  motor?: string;       // "Alle" | "Geen" | "E-bike"
+  minYear?: number;
+  maxKm?: number;
   sort?: "relevance" | "price-asc" | "price-desc" | "year-desc" | "km-asc";
 };
 
@@ -34,6 +38,11 @@ export const fetchBikes = async (f: BikeFilters = {}): Promise<Bike[]> => {
   if (f.type && f.type !== "Alle types") q = q.eq("type", f.type);
   if (f.brand && f.brand !== "Alle merken") q = q.eq("brand", f.brand);
   if (f.maxPrice && f.maxPrice > 0) q = q.lte("price", f.maxPrice);
+  if (f.city && f.city.trim()) q = q.ilike("city", `%${sanitizeQuery(f.city)}%`);
+  if (f.motor === "E-bike") q = q.not("motor", "is", null);
+  if (f.motor === "Geen") q = q.is("motor", null);
+  if (f.minYear && f.minYear > 0) q = q.gte("year", f.minYear);
+  if (f.maxKm && f.maxKm > 0) q = q.lte("km", f.maxKm);
   if (f.q) {
     const safe = sanitizeQuery(f.q);
     if (safe.length > 0) {
