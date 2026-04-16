@@ -23,12 +23,26 @@ export type BikeFilters = {
   sort?: "relevance" | "price-asc" | "price-desc" | "year-desc" | "km-asc";
 };
 
+// Sanitize free-text search to prevent PostgREST filter injection.
+// Strip characters meaningful to PostgREST .or() syntax: , ( ) . \ %
+// and clamp to 80 chars.
+const sanitizeQuery = (input: string): string =>
+  input.replace(/[,()\\.%]/g, " ").trim().slice(0, 80);
+
 export const fetchBikes = async (f: BikeFilters = {}): Promise<Bike[]> => {
   let q = supabase.from("bikes").select("*").eq("status", "active");
   if (f.type && f.type !== "Alle types") q = q.eq("type", f.type);
   if (f.brand && f.brand !== "Alle merken") q = q.eq("brand", f.brand);
   if (f.maxPrice && f.maxPrice > 0) q = q.lte("price", f.maxPrice);
-  if (f.q) q = q.or(`title.ilike.%${f.q}%,model.ilike.%${f.q}%,brand.ilike.%${f.q}%,city.ilike.%${f.q}%`);
+  if (f.q) {
+    const safe = sanitizeQuery(f.q);
+    if (safe.length > 0) {
+      const term = `%${safe}%`;
+      q = q.or(
+        `title.ilike.${term},model.ilike.${term},brand.ilike.${term},city.ilike.${term}`
+      );
+    }
+  }
 
   switch (f.sort) {
     case "price-asc":  q = q.order("price", { ascending: true }); break;
