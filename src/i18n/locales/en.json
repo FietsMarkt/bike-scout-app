@@ -1,0 +1,70 @@
+{
+  "nav": {
+    "buyBikes": "Buy bikes",
+    "sellBike": "Sell a bike",
+    "parts": "Parts",
+    "dealers": "Dealers",
+    "magazine": "Magazine",
+    "favorites": "Favorites",
+    "login": "Sign in",
+    "logout": "Sign out",
+    "myAds": "My listings",
+    "placeBike": "List a bike",
+    "menu": "Menu",
+    "language": "Language"
+  },
+  "hero": {
+    "tagline": "Nº 1 bike marketplace in the Benelux",
+    "title": "Find your",
+    "titleHighlight": "perfect bike",
+    "subtitle": "Over 84,000 new and used bikes from private sellers and dealers.",
+    "tabBuy": "Buy a bike",
+    "tabSell": "Sell a bike",
+    "type": "Type",
+    "brand": "Brand",
+    "priceUpTo": "Price up to",
+    "postcode": "Postcode",
+    "search": "Search",
+    "place": "List",
+    "results": "{{count}} results",
+    "advancedSearch": "Advanced search",
+    "savedSearches": "Saved searches"
+  },
+  "categories": {
+    "title": "Browse by category",
+    "subtitle": "Find exactly the bike that fits you",
+    "viewAll": "All categories →"
+  },
+  "featured": {
+    "kicker": "Recommended",
+    "title": "Top bikes for you",
+    "subtitle": "The latest listings on FietsMarkt",
+    "viewAll": "View all bikes",
+    "empty": "No bikes listed yet.",
+    "placeFirst": "List the first bike"
+  },
+  "trust": {
+    "secureTitle": "Secure payments",
+    "secureText": "FietsGarant® protection up to € 10,000",
+    "buyersTitle": "180,000 buyers",
+    "buyersText": "Active on the platform every month",
+    "dealersTitle": "Verified dealers",
+    "dealersText": "Over 1,200 trusted bike shops"
+  },
+  "footer": {
+    "tagline": "The largest online marketplace for new and used bikes in the Benelux.",
+    "buy": "Buy",
+    "sell": "Sell",
+    "service": "Service",
+    "company": "Company",
+    "rights": "All rights reserved.",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "cookies": "Cookies"
+  },
+  "card": {
+    "addFav": "Add to favorites",
+    "removeFav": "Remove from favorites",
+    "dealer": "Dealer"
+  }
+}

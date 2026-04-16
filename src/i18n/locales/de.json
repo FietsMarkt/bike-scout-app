@@ -1,0 +1,70 @@
+{
+  "nav": {
+    "buyBikes": "Fahrräder kaufen",
+    "sellBike": "Fahrrad verkaufen",
+    "parts": "Teile",
+    "dealers": "Händler",
+    "magazine": "Magazin",
+    "favorites": "Favoriten",
+    "login": "Anmelden",
+    "logout": "Abmelden",
+    "myAds": "Meine Anzeigen",
+    "placeBike": "Fahrrad inserieren",
+    "menu": "Menü",
+    "language": "Sprache"
+  },
+  "hero": {
+    "tagline": "Nr. 1 Fahrradmarkt der Benelux",
+    "title": "Finde dein",
+    "titleHighlight": "perfektes Fahrrad",
+    "subtitle": "Über 84.000 neue und gebrauchte Fahrräder von Privat und Händlern.",
+    "tabBuy": "Fahrrad kaufen",
+    "tabSell": "Fahrrad verkaufen",
+    "type": "Typ",
+    "brand": "Marke",
+    "priceUpTo": "Preis bis",
+    "postcode": "PLZ",
+    "search": "Suchen",
+    "place": "Inserieren",
+    "results": "{{count}} Ergebnisse",
+    "advancedSearch": "Erweiterte Suche",
+    "savedSearches": "Gespeicherte Suchen"
+  },
+  "categories": {
+    "title": "Nach Kategorie stöbern",
+    "subtitle": "Finde genau das Fahrrad, das zu dir passt",
+    "viewAll": "Alle Kategorien →"
+  },
+  "featured": {
+    "kicker": "Empfohlen",
+    "title": "Top-Fahrräder für dich",
+    "subtitle": "Die neuesten Anzeigen auf FietsMarkt",
+    "viewAll": "Alle Fahrräder ansehen",
+    "empty": "Noch keine Fahrräder inseriert.",
+    "placeFirst": "Erstes Fahrrad inserieren"
+  },
+  "trust": {
+    "secureTitle": "Sicher bezahlen",
+    "secureText": "Mit FietsGarant® Schutz bis € 10.000",
+    "buyersTitle": "180.000 Käufer",
+    "buyersText": "Monatlich auf der Plattform aktiv",
+    "dealersTitle": "Verifizierte Händler",
+    "dealersText": "Über 1.200 anerkannte Fahrradgeschäfte"
+  },
+  "footer": {
+    "tagline": "Der größte Online-Marktplatz für neue und gebrauchte Fahrräder in den Benelux.",
+    "buy": "Kaufen",
+    "sell": "Verkaufen",
+    "service": "Service",
+    "company": "Unternehmen",
+    "rights": "Alle Rechte vorbehalten.",
+    "privacy": "Datenschutz",
+    "terms": "AGB",
+    "cookies": "Cookies"
+  },
+  "card": {
+    "addFav": "Zu Favoriten hinzufügen",
+    "removeFav": "Aus Favoriten entfernen",
+    "dealer": "Händler"
+  }
+}
