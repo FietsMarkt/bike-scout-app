@@ -333,11 +333,11 @@ const YearRow = ({ minYear, onChange }: { minYear: number; onChange: (v: number)
       label="Bouwjaar"
       value={minYear > 0 ? `vanaf ${minYear}` : undefined}
     >
-      <div className="text-center font-display text-2xl font-extrabold">
+      <div className="text-center font-display text-xl font-extrabold">
         {minYear > 0 ? `vanaf ${minYear}` : "Alle bouwjaren"}
       </div>
       <Slider
-        className="mt-6"
+        className="mt-3"
         min={1990}
         max={currentYear}
         step={1}
