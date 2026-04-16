@@ -3,9 +3,13 @@ import { Categories } from "@/components/Categories";
 import { FeaturedListings } from "@/components/FeaturedListings";
 import { TrustBar } from "@/components/TrustBar";
 import { Layout } from "@/components/Layout";
+import { AppHome } from "@/components/AppHome";
+import { useStandalone } from "@/hooks/useStandalone";
 import { useEffect } from "react";
 
 const Index = () => {
+  const isApp = useStandalone();
+
   useEffect(() => {
     document.title = "FietsMarkt — Koop & verkoop fietsen | Nº 1 fietsenmarktplaats";
     const meta =
@@ -20,10 +24,16 @@ const Index = () => {
 
   return (
     <Layout>
-      <Hero />
-      <Categories />
-      <FeaturedListings />
-      <TrustBar />
+      {isApp ? (
+        <AppHome />
+      ) : (
+        <>
+          <Hero />
+          <Categories />
+          <FeaturedListings />
+          <TrustBar />
+        </>
+      )}
     </Layout>
   );
 };
