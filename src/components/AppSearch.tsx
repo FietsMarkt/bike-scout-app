@@ -357,11 +357,7 @@ const KmRow = ({ maxKm, onChange }: { maxKm: number; onChange: (v: number) => vo
     label="Kilometerstand"
     value={maxKm > 0 ? `tot ${maxKm.toLocaleString("nl-BE")} km` : undefined}
   >
-    <div className="text-center font-display text-xl font-extrabold">
-      {maxKm > 0 ? `tot ${maxKm.toLocaleString("nl-BE")} km` : "Geen limiet"}
-    </div>
     <Slider
-      className="mt-3"
       min={0}
       max={50000}
       step={500}
@@ -370,6 +366,9 @@ const KmRow = ({ maxKm, onChange }: { maxKm: number; onChange: (v: number) => vo
     />
     <div className="mt-2 flex justify-between text-xs text-muted-foreground">
       <span>0</span>
+      <span className="font-display font-bold text-foreground text-sm">
+        {maxKm > 0 ? `tot ${maxKm.toLocaleString("nl-BE")} km` : "Geen limiet"}
+      </span>
       <span>50.000+</span>
     </div>
   </RowShell>
