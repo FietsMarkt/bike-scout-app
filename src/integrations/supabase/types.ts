@@ -179,6 +179,57 @@ export type Database = {
           },
         ]
       }
+      price_suggestions: {
+        Row: {
+          brand: string
+          cache_key: string
+          created_at: string
+          expires_at: string
+          id: string
+          km_bucket: number
+          max_price: number
+          min_price: number
+          model: string
+          reasoning: string
+          recommended_price: number
+          sample_size: number
+          type: string
+          year_bucket: number
+        }
+        Insert: {
+          brand: string
+          cache_key: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          km_bucket: number
+          max_price: number
+          min_price: number
+          model: string
+          reasoning: string
+          recommended_price: number
+          sample_size?: number
+          type: string
+          year_bucket: number
+        }
+        Update: {
+          brand?: string
+          cache_key?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          km_bucket?: number
+          max_price?: number
+          min_price?: number
+          model?: string
+          reasoning?: string
+          recommended_price?: number
+          sample_size?: number
+          type?: string
+          year_bucket?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

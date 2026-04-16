@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Upload, Image as ImageIcon, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { PriceSuggestion } from "@/components/PriceSuggestion";
 
 const PlaceBike = () => {
   const nav = useNavigate();
@@ -172,8 +173,18 @@ const PlaceBike = () => {
               <Field label="Kilometerstand">
                 <Input type="number" min={0} value={km} onChange={(e) => setKm(Number(e.target.value))} />
               </Field>
-              <Field label="Prijs (€) *">
+              <Field label="Prijs (€) *" className="sm:col-span-2">
                 <Input type="number" min={1} value={price || ""} onChange={(e) => setPrice(Number(e.target.value))} placeholder="2500" required />
+                <div className="mt-2">
+                  <PriceSuggestion
+                    brand={brand}
+                    model={model}
+                    type={type}
+                    year={year}
+                    km={km}
+                    onApply={setPrice}
+                  />
+                </div>
               </Field>
               <Field label="Stad *" className="sm:col-span-2">
                 <Input value={city} onChange={(e) => setCity(e.target.value)} placeholder="bv. Amsterdam, NH" required />
