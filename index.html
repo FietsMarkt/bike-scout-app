@@ -2,29 +2,72 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- TODO: Set the document title to the name of your application -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Fietsmarkt</title>
     <meta name="description" content="A mobile marketplace for buying and selling bicycles, inspired by AutoScout24.">
     <meta name="author" content="Lovable" />
 
-    <!-- TODO: Update og:title to match your application name -->
-    
-    
-    <meta property="og:type" content="website" />
-    
+    <!-- iOS PWA: full-screen + dark status bar that blends with the app header -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="FietsMarkt" />
+    <meta name="theme-color" content="#0b1020" />
 
+    <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@Lovable" />
-    
     <meta property="og:title" content="Fietsmarkt">
-  <meta name="twitter:title" content="Fietsmarkt">
-  <meta property="og:description" content="A mobile marketplace for buying and selling bicycles, inspired by AutoScout24.">
-  <meta name="twitter:description" content="A mobile marketplace for buying and selling bicycles, inspired by AutoScout24.">
-</head>
+    <meta name="twitter:title" content="Fietsmarkt">
+    <meta property="og:description" content="A mobile marketplace for buying and selling bicycles, inspired by AutoScout24.">
+    <meta name="twitter:description" content="A mobile marketplace for buying and selling bicycles, inspired by AutoScout24.">
+
+    <style>
+      /* Splash background — visible until React mounts. Matches dark header. */
+      html, body { background: #0b1020; }
+      #initial-splash {
+        position: fixed; inset: 0; z-index: 9999;
+        display: grid; place-items: center;
+        background: linear-gradient(135deg, #0b1020 0%, #1a1d3a 100%);
+        transition: opacity 0.4s ease;
+      }
+      #initial-splash.hide { opacity: 0; pointer-events: none; }
+      #initial-splash .logo {
+        display: inline-flex; align-items: center; gap: 12px;
+        font-family: -apple-system, system-ui, sans-serif;
+        color: #fff; font-weight: 800; font-size: 28px; letter-spacing: -0.02em;
+      }
+      #initial-splash .icon {
+        display: grid; place-items: center;
+        width: 56px; height: 56px; border-radius: 16px;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        box-shadow: 0 12px 40px rgba(79, 70, 229, 0.45);
+      }
+      #initial-splash .accent { color: #818cf8; }
+    </style>
+  </head>
 
   <body>
+    <div id="initial-splash">
+      <div class="logo">
+        <span class="icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg>
+        </span>
+        <span>Fiets<span class="accent">Markt</span></span>
+      </div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      window.addEventListener('load', function () {
+        setTimeout(function () {
+          var s = document.getElementById('initial-splash');
+          if (s) {
+            s.classList.add('hide');
+            setTimeout(function () { s.remove(); }, 500);
+          }
+        }, 250);
+      });
+    </script>
   </body>
 </html>
