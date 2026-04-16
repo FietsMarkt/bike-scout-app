@@ -1,8 +1,7 @@
-import { ShieldCheck, Truck, Users, Sparkles } from "lucide-react";
+import { ShieldCheck, Users, Sparkles } from "lucide-react";
 
 const items = [
   { icon: ShieldCheck, title: "Veilig betalen", text: "Met FietsGarant® bescherming tot € 10.000" },
-  { icon: Truck, title: "Bezorging in NL/BE", text: "Inclusief track & trace en verzekerde verzending" },
   { icon: Users, title: "180.000 kopers", text: "Maandelijks actief op het platform" },
   { icon: Sparkles, title: "Geverifieerde dealers", text: "Meer dan 1.200 erkende fietswinkels" },
 ];
