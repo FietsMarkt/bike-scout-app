@@ -285,9 +285,9 @@ const RowShell = ({
         <ChevronRight className="h-5 w-5 opacity-60" />
       </button>
     </SheetTrigger>
-    <SheetContent side="bottom" className="rounded-t-2xl">
-      <SheetHeader><SheetTitle>{label}</SheetTitle></SheetHeader>
-      <div className="mt-4 px-1">{children}</div>
+    <SheetContent side="bottom" className="rounded-t-2xl p-4 pt-3">
+      <SheetHeader><SheetTitle className="text-base">{label}</SheetTitle></SheetHeader>
+      <div className="mt-3 px-1">{children}</div>
     </SheetContent>
   </Sheet>
 );
