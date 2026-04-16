@@ -36,7 +36,7 @@ export const AppHome = () => {
           <LanguageSwitcher variant="default" />
         </div>
 
-        <div className="flex items-center justify-center gap-3 font-display text-3xl font-extrabold">
+        <div className="mt-2 flex items-center justify-center gap-3 font-display text-3xl font-extrabold">
           <span className="grid h-12 w-12 place-items-center rounded-xl bg-gradient-indigo">
             <Bike className="h-7 w-7 text-primary-foreground" />
           </span>
