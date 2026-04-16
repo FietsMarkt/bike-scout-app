@@ -7,8 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 /**
- * Native-app style bottom tab bar. Rendered only in PWA standalone mode.
- * Center "Plus" tab is visually elevated as a primary action.
+ * Premium native-app style bottom tab bar (dark indigo, blur, indigo accents).
+ * Center "Plus" tab is elevated with gradient bg.
  */
 export const BottomTabBar = () => {
   const { user } = useAuth();
@@ -36,8 +36,8 @@ export const BottomTabBar = () => {
 
   const tabClass = (active: boolean) =>
     cn(
-      "flex flex-col items-center justify-center gap-0.5 flex-1 min-w-0 py-1.5 text-[10px] font-medium transition-colors",
-      active ? "text-primary" : "text-muted-foreground",
+      "relative flex flex-col items-center justify-center gap-0.5 flex-1 min-w-0 py-2 text-[10px] font-semibold transition-colors",
+      active ? "text-primary" : "text-header-foreground/60",
     );
 
   const isHome = pathname === "/";
@@ -47,17 +47,20 @@ export const BottomTabBar = () => {
 
   return (
     <nav
-      className="fixed bottom-0 inset-x-0 z-50 bg-card/95 backdrop-blur border-t border-border"
+      className="fixed bottom-0 inset-x-0 z-50 bg-header/95 backdrop-blur-xl border-t border-white/10 shadow-[0_-8px_32px_rgba(0,0,0,0.25)]"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       aria-label="Hoofdnavigatie"
     >
-      <div className="flex items-end h-16 max-w-md mx-auto px-1">
+      <div className="flex items-end h-[58px] max-w-md mx-auto px-1">
         <NavLink to="/" className={tabClass(isHome)} end>
-          <Home className="h-5 w-5" />
+          {isHome && <span className="absolute top-0 h-0.5 w-8 rounded-full bg-primary" />}
+          <Home className="h-5 w-5" strokeWidth={isHome ? 2.5 : 2} />
           <span>Home</span>
         </NavLink>
+
         <NavLink to="/zoeken" className={tabClass(isSearch)}>
-          <Search className="h-5 w-5" />
+          {isSearch && <span className="absolute top-0 h-0.5 w-8 rounded-full bg-primary" />}
+          <Search className="h-5 w-5" strokeWidth={isSearch ? 2.5 : 2} />
           <span>Zoeken</span>
         </NavLink>
 
@@ -67,27 +70,30 @@ export const BottomTabBar = () => {
           className="flex-1 flex justify-center"
           aria-label="Plaats fiets"
         >
-          <span className="-mt-5 grid h-14 w-14 place-items-center rounded-full bg-gradient-indigo text-primary-foreground shadow-lg shadow-primary/30 active:scale-95 transition-transform">
+          <span className="-mt-7 grid h-14 w-14 place-items-center rounded-2xl bg-gradient-indigo text-primary-foreground shadow-elevated ring-4 ring-header active:scale-95 transition-transform">
             <Plus className="h-7 w-7" strokeWidth={2.5} />
           </span>
         </NavLink>
 
         <NavLink to={user ? "/berichten" : "/inloggen"} className={tabClass(isMessages)}>
+          {isMessages && <span className="absolute top-0 h-0.5 w-8 rounded-full bg-primary" />}
           <span className="relative">
-            <MessageSquare className="h-5 w-5" />
+            <MessageSquare className="h-5 w-5" strokeWidth={isMessages ? 2.5 : 2} />
             {unread > 0 && (
-              <span className="absolute -top-1.5 -right-2 grid min-w-4 h-4 px-1 place-items-center rounded-full bg-primary text-primary-foreground text-[9px] font-bold">
+              <span className="absolute -top-1.5 -right-2 grid min-w-4 h-4 px-1 place-items-center rounded-full bg-primary text-primary-foreground text-[9px] font-bold ring-2 ring-header">
                 {unread > 9 ? "9+" : unread}
               </span>
             )}
           </span>
           <span>Chat</span>
         </NavLink>
+
         <NavLink to="/favorieten" className={tabClass(isFavs)}>
+          {isFavs && <span className="absolute top-0 h-0.5 w-8 rounded-full bg-primary" />}
           <span className="relative">
-            <Heart className="h-5 w-5" />
+            <Heart className="h-5 w-5" strokeWidth={isFavs ? 2.5 : 2} />
             {favCount > 0 && (
-              <span className="absolute -top-1.5 -right-2 grid min-w-4 h-4 px-1 place-items-center rounded-full bg-primary text-primary-foreground text-[9px] font-bold">
+              <span className="absolute -top-1.5 -right-2 grid min-w-4 h-4 px-1 place-items-center rounded-full bg-primary text-primary-foreground text-[9px] font-bold ring-2 ring-header">
                 {favCount > 9 ? "9+" : favCount}
               </span>
             )}
