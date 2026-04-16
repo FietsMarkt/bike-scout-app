@@ -13,6 +13,11 @@
     "menu": "Menu",
     "language": "Langue"
   },
+  "theme": {
+    "toggle": "Changer de thème",
+    "light": "Clair",
+    "dark": "Sombre"
+  },
   "hero": {
     "tagline": "N° 1 du marché du vélo au Benelux",
     "title": "Trouvez votre",
@@ -85,6 +90,10 @@
     "all": "Tous",
     "back": "Retour",
     "share": "Partager",
-    "contact": "Contacter le vendeur"
+    "contact": "Contacter le vendeur",
+    "dealOfWeek": "Offre de la semaine",
+    "priceDropped": "Prix réduit",
+    "activeFilters": "Filtres actifs",
+    "removeFilter": "Retirer le filtre"
   }
 }

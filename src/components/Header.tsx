@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { PushOptIn } from "@/components/PushOptIn";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -103,6 +104,7 @@ export const Header = () => {
           </Link>
 
           <PushOptIn variant="compact" />
+          <ThemeToggle />
           <LanguageSwitcher />
 
           {user ? (

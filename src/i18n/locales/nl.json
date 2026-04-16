@@ -13,6 +13,11 @@
     "menu": "Menu",
     "language": "Taal"
   },
+  "theme": {
+    "toggle": "Thema wisselen",
+    "light": "Licht",
+    "dark": "Donker"
+  },
   "hero": {
     "tagline": "Nº 1 fietsenmarkt van de Benelux",
     "title": "Vind jouw",
@@ -85,6 +90,10 @@
     "all": "Alle",
     "back": "Terug",
     "share": "Delen",
-    "contact": "Contact verkoper"
+    "contact": "Contact verkoper",
+    "dealOfWeek": "Deal van de week",
+    "priceDropped": "Prijs verlaagd",
+    "activeFilters": "Actieve filters",
+    "removeFilter": "Verwijder filter"
   }
 }
