@@ -11,7 +11,6 @@ export const Layout = ({ children }: { children: ReactNode }) => {
   if (isApp) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <AppHeader />
         <main className="flex-1 pb-20">{children}</main>
         <BottomTabBar />
       </div>
