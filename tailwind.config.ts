@@ -15,7 +15,7 @@ export default {
     extend: {
       fontFamily: {
         display: ['Sora', 'system-ui', 'sans-serif'],
-        sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+        sans: ['Sora', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
