@@ -74,7 +74,7 @@ export const AppHome = () => {
       >
         {/* decorative glow */}
         <div className="absolute top-0 right-0 h-40 w-40 rounded-full bg-primary/30 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-10 left-0 h-32 w-32 rounded-full bg-fuchsia-500/20 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-10 left-0 h-32 w-32 rounded-full bg-primary/20 blur-3xl pointer-events-none" />
 
         <div className="relative">
           <div className="inline-flex items-center gap-1.5 rounded-full bg-white/10 backdrop-blur px-3 py-1 text-[10px] font-bold uppercase tracking-wider mb-3">
@@ -82,7 +82,7 @@ export const AppHome = () => {
             <span>Nº 1 fietsenmarkt Benelux</span>
           </div>
           <h1 className="font-display text-2xl font-extrabold leading-tight">
-            Vind jouw <span className="bg-gradient-to-r from-primary to-fuchsia-400 bg-clip-text text-transparent">perfecte fiets</span>
+            Vind jouw <span className="bg-gradient-indigo bg-clip-text text-transparent">perfecte fiets</span>
           </h1>
           <p className="text-xs text-header-foreground/70 mt-1">
             {count ? `${fmt.format(count)} advertenties` : "Doorzoek alle fietsen"} · particulier &amp; dealers
@@ -129,7 +129,7 @@ export const AppHome = () => {
               <div className="text-[9px] text-header-foreground/60">maandelijks</div>
             </div>
             <div className="rounded-xl bg-white/5 backdrop-blur px-2 py-2.5">
-              <Store className="h-4 w-4 mx-auto text-amber-400" />
+              <Store className="h-4 w-4 mx-auto text-primary" />
               <div className="text-[10px] font-bold mt-1">1.200 dealers</div>
               <div className="text-[9px] text-header-foreground/60">geverifieerd</div>
             </div>
