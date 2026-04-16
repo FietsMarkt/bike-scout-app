@@ -1,11 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useQueryClient } from "@tanstack/react-query";
 import { Search, Heart, Bike, Flame, TrendingDown } from "lucide-react";
 import { useBikes } from "@/hooks/useBikes";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { getOptimizedImage } from "@/lib/image";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { BlurImage } from "@/components/BlurImage";
+import { PullIndicator } from "@/components/PullIndicator";
+import { usePullToRefresh } from "@/hooks/usePullToRefresh";
+import { haptic } from "@/lib/haptic";
 import { supabase } from "@/integrations/supabase/client";
 
 const fmt = new Intl.NumberFormat("nl-BE");

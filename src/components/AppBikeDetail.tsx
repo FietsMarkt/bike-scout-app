@@ -60,6 +60,7 @@ export const AppBikeDetail = () => {
   };
 
   const startChat = async () => {
+    haptic("medium");
     if (!user) { nav("/inloggen"); return; }
     if (!sellerId) return;
     if (sellerId === user.id) { toast({ title: "Dit is je eigen advertentie" }); return; }
