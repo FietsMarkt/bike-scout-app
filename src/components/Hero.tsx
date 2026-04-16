@@ -6,7 +6,19 @@ import { Search, MapPin } from "lucide-react";
 import { useState } from "react";
 
 const types = ["Alle types", "Racefiets", "Mountainbike", "E-bike", "Stadsfiets", "Gravel", "Bakfiets", "Vouwfiets"];
-const brands = ["Alle merken", "Trek", "Specialized", "Giant", "Canyon", "Cube", "Cannondale", "Bianchi", "Stromer", "Riese & Müller"];
+const brands = [
+  "Alle merken",
+  "Apollo", "Atala", "Author", "Basso", "Batavus", "BH", "Bianchi", "BMC", "Bottecchia", "Brompton",
+  "Bulls", "Cannondale", "Canyon", "Cervélo", "Centurion", "Colnago", "Conway", "Cortina", "Cube", "Dawes",
+  "De Rosa", "Diamondback", "Eddy Merckx", "Electra", "Felt", "Focus", "Fuji", "Gazelle", "Genesis", "Ghost",
+  "Giant", "Gocycle", "GT", "Haibike", "Husqvarna", "Ibis", "Kalkhoff", "Klein", "Kona", "KTM",
+  "Koga", "Lapierre", "Lekker", "Liv", "Look", "Marin", "Merida", "Mongoose", "Moustache", "MTB Cycletech",
+  "Norco", "NS Bikes", "Nukeproof", "Orbea", "Orange", "Pegasus", "Pinarello", "Pivot", "Polygon", "Puch",
+  "Puky", "Raleigh", "Ridgeback", "Ridley", "Riese & Müller", "Rocky Mountain", "Rondo", "Rose", "Salsa", "Santa Cruz",
+  "Saracen", "Schwinn", "Scott", "Sensa", "Simplon", "Specialized", "Sparta", "Stevens", "Storck", "Stromer",
+  "Surly", "Time", "Trek", "Trinx", "Univega", "Van Nicholas", "Van Raam", "Vanmoof", "Velo de Ville",
+  "Vitus", "Whyte", "Wilier", "Winora", "Yeti", "Yuba",
+];
 const prices = ["Geen limiet", "€ 500", "€ 1.000", "€ 2.500", "€ 5.000", "€ 10.000"];
 
 export const Hero = () => {
