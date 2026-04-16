@@ -20,7 +20,7 @@ export const AppHome = () => {
   }, []);
 
   return (
-    <div className="-mt-12 pb-2 bg-surface min-h-screen">
+    <div className="pb-2 bg-surface min-h-screen">
       {/* HEADER */}
       <section
         className="bg-header text-header-foreground px-5 pb-5"
