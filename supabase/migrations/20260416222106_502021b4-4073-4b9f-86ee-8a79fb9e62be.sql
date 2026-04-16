@@ -1,0 +1,27 @@
+
+INSERT INTO public.bikes (user_id, title, subtitle, brand, model, type, motor, year, km, price, previous_price, city, images, description, status)
+VALUES
+  ('3219a655-a1ac-4b55-a73c-d6482424a98c', 'Trek Domane SL 7', 'Carbon racefiets, Ultegra Di2', 'Trek', 'Domane SL 7', 'Racefiets', NULL, 2023, 4200, 3499, 3899, 'Antwerpen',
+    ARRAY['https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=800&q=80'],
+    'In topstaat verkerende Trek Domane SL 7 met elektronische Ultegra Di2 groep.', 'active'),
+  ('3219a655-a1ac-4b55-a73c-d6482424a98c', 'Specialized Turbo Vado 4.0', 'Comfortabele e-bike voor woon-werk', 'Specialized', 'Turbo Vado 4.0', 'E-bike', 'Specialized 1.2', 2022, 8500, 2799, NULL, 'Gent',
+    ARRAY['https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=800&q=80'],
+    'Sterke e-bike met 90Nm motor en lange actieradius.', 'active'),
+  ('3219a655-a1ac-4b55-a73c-d6482424a98c', 'Canyon Spectral 29 CF 8', 'All-mountain MTB carbon', 'Canyon', 'Spectral 29 CF 8', 'MTB', NULL, 2024, 1100, 4250, NULL, 'Brussel',
+    ARRAY['https://images.unsplash.com/photo-1511994298241-608e28f14fde?w=800&q=80'],
+    'Bijna nieuwe full-suspension MTB met SRAM GX Eagle.', 'active'),
+  ('3219a655-a1ac-4b55-a73c-d6482424a98c', 'Cube Nuride Hybrid Pro', 'Hybride e-bike Bosch motor', 'Cube', 'Nuride Hybrid Pro', 'E-bike', 'Bosch Performance Line', 2023, 3400, 2199, 2499, 'Leuven',
+    ARRAY['https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=800&q=80'],
+    'Comfortabele hybride met Bosch motor en 625Wh accu.', 'active'),
+  ('3219a655-a1ac-4b55-a73c-d6482424a98c', 'Cervélo Aspero GRX', 'Gravel race klaar', 'Cervélo', 'Aspero', 'Gravel', NULL, 2022, 6700, 2899, NULL, 'Brugge',
+    ARRAY['https://images.unsplash.com/photo-1502744688674-c619d1586c9e?w=800&q=80'],
+    'Snelle gravelfiets met Shimano GRX groep.', 'active'),
+  ('3219a655-a1ac-4b55-a73c-d6482424a98c', 'Giant Talon 1', 'Hardtail MTB instapper', 'Giant', 'Talon 1', 'MTB', NULL, 2021, 5400, 649, 799, 'Mechelen',
+    ARRAY['https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?w=800&q=80'],
+    'Goede hardtail in nette staat, perfect voor beginners.', 'active'),
+  ('3219a655-a1ac-4b55-a73c-d6482424a98c', 'Riese & Müller Charger4', 'Premium trekking e-bike', 'Riese & Müller', 'Charger4', 'E-bike', 'Bosch Performance CX', 2024, 1800, 5499, NULL, 'Hasselt',
+    ARRAY['https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?w=800&q=80'],
+    'High-end e-bike met dubbele accu en Rohloff naaf.', 'active'),
+  ('3219a655-a1ac-4b55-a73c-d6482424a98c', 'BMC Teammachine SLR01', 'Pro level race carbon', 'BMC', 'Teammachine SLR01', 'Racefiets', NULL, 2023, 3200, 5899, 6499, 'Kortrijk',
+    ARRAY['https://images.unsplash.com/photo-1517649763962-0c623066013b?w=800&q=80'],
+    'Wedstrijdfiets met Dura-Ace Di2, zeer licht.', 'active');
