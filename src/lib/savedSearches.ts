@@ -23,7 +23,7 @@ export const listSavedSearches = async (userId: string): Promise<SavedSearch[]> 
 export const createSavedSearch = async (userId: string, name: string, filters: Record<string, unknown>) => {
   const { data, error } = await supabase
     .from("saved_searches")
-    .insert({ user_id: userId, name: name.trim().slice(0, 80), filters })
+    .insert([{ user_id: userId, name: name.trim().slice(0, 80), filters: filters as never }])
     .select()
     .maybeSingle();
   if (error) throw error;
