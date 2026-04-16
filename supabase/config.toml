@@ -1,1 +1,16 @@
 project_id = "nqbhfzlnfwuddwovqdhf"
+
+[functions.send-push]
+verify_jwt = false
+
+[functions.notify-on-message]
+verify_jwt = false
+
+[functions.notify-on-favorite]
+verify_jwt = false
+
+[functions.notify-price-drop]
+verify_jwt = false
+
+[functions.match-saved-searches]
+verify_jwt = false
