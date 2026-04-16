@@ -26,13 +26,11 @@ export const AppHome = () => {
         className="bg-background px-5 pb-5 border-b border-border/40"
         style={{ paddingTop: "calc(env(safe-area-inset-top) + 0.875rem)" }}
       >
-        <div className="flex items-center justify-center gap-3">
-          <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-indigo">
-            <Bike className="h-5 w-5 text-primary-foreground" strokeWidth={2} />
+        <div className="flex items-center justify-center gap-2 font-display text-2xl font-extrabold">
+          <span className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-indigo">
+            <Bike className="h-5 w-5 text-primary-foreground" />
           </span>
-          <h1 className="font-display text-[28px] font-semibold tracking-tight leading-none">
-            Fiets<span className="text-primary font-medium">markt</span>
-          </h1>
+          <span>Fiets<span className="text-primary">Markt</span></span>
         </div>
 
         <button
