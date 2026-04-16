@@ -1,9 +1,8 @@
-import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
 import { Categories } from "@/components/Categories";
 import { FeaturedListings } from "@/components/FeaturedListings";
 import { TrustBar } from "@/components/TrustBar";
-import { Footer } from "@/components/Footer";
+import { Layout } from "@/components/Layout";
 import { useEffect } from "react";
 
 const Index = () => {
@@ -17,25 +16,15 @@ const Index = () => {
       "Vind nieuwe en gebruikte fietsen: racefietsen, e-bikes, MTB, gravel en meer. 84.000+ advertenties van particulieren en dealers.",
     );
     document.head.appendChild(meta);
-
-    const canonical =
-      document.querySelector('link[rel="canonical"]') ||
-      Object.assign(document.createElement("link"), { rel: "canonical" });
-    canonical.setAttribute("href", window.location.origin + "/");
-    document.head.appendChild(canonical);
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <main>
-        <Hero />
-        <Categories />
-        <FeaturedListings />
-        <TrustBar />
-      </main>
-      <Footer />
-    </div>
+    <Layout>
+      <Hero />
+      <Categories />
+      <FeaturedListings />
+      <TrustBar />
+    </Layout>
   );
 };
 
