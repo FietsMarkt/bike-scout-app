@@ -121,6 +121,28 @@ export const AppSearch = () => {
               </SelectContent>
             </Select>
           </div>
+          {chips.length > 0 && (
+            <div className="px-4 pb-3 flex gap-1.5 overflow-x-auto scrollbar-none">
+              {chips.map((c) => (
+                <button
+                  key={c.key}
+                  onClick={c.onRemove}
+                  className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-card text-foreground px-3 py-1 text-xs font-semibold active:scale-95 transition-transform"
+                >
+                  <span className="max-w-[140px] truncate">{c.label}</span>
+                  <X className="h-3 w-3 opacity-70" strokeWidth={2.5} />
+                </button>
+              ))}
+              {chips.length > 1 && (
+                <button
+                  onClick={clearAll}
+                  className="shrink-0 inline-flex items-center rounded-full bg-transparent border border-header-foreground/30 px-3 py-1 text-xs font-semibold opacity-80"
+                >
+                  Wis alles
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="px-4 pt-3 space-y-2.5">
