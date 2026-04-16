@@ -1,5 +1,6 @@
 import { Heart, MapPin, Calendar, Gauge, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useFavorites } from "@/contexts/FavoritesContext";
 
 export type Bike = {
   id: string;
@@ -18,8 +19,17 @@ export type Bike = {
 const fmt = new Intl.NumberFormat("nl-NL");
 
 export const BikeCard = ({ bike }: { bike: Bike }) => {
+  const { toggle, has } = useFavorites();
+  const isFav = has(bike.id);
+
+  const onFav = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggle(bike.id);
+  };
+
   return (
-    <article className="group rounded-xl bg-card border border-border overflow-hidden shadow-card hover:shadow-elevated hover:-translate-y-0.5 transition-smooth">
+    <article className="group rounded-xl bg-card border border-border overflow-hidden shadow-card hover:shadow-elevated hover:-translate-y-0.5 transition-smooth h-full">
       <div className="relative aspect-[4/3] overflow-hidden bg-muted">
         <img
           src={bike.image}
@@ -33,10 +43,11 @@ export const BikeCard = ({ bike }: { bike: Bike }) => {
           </Badge>
         )}
         <button
-          aria-label="Favoriet"
+          aria-label={isFav ? "Verwijder uit favorieten" : "Toevoegen aan favorieten"}
+          onClick={onFav}
           className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-card/90 backdrop-blur hover:bg-card transition-smooth"
         >
-          <Heart className="h-4 w-4" />
+          <Heart className={`h-4 w-4 ${isFav ? "fill-primary text-primary" : ""}`} />
         </button>
         {bike.dealer && (
           <span className="absolute bottom-3 left-3 rounded-md bg-card/95 px-2 py-1 text-[10px] font-bold uppercase tracking-wide">
