@@ -100,7 +100,10 @@ export const AppBikeDetail = () => {
           style={{ paddingTop: "calc(env(safe-area-inset-top) + 0.75rem)" }}
         >
           <button
-            onClick={() => nav(-1)}
+            onClick={() => {
+              if (window.history.length > 1) nav(-1);
+              else nav("/");
+            }}
             aria-label="Terug"
             className="grid h-10 w-10 place-items-center rounded-full bg-card/90 backdrop-blur shadow-md"
           >
