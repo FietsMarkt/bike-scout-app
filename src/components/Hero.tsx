@@ -43,7 +43,7 @@ export const Hero = () => {
             Nº 1 fietsenmarkt van de Benelux
           </span>
           <h1 className="mt-4 font-display text-4xl md:text-6xl font-extrabold leading-[1.05]">
-            Vind jouw <span className="text-primary">perfecte fiets</span>
+            Vind jouw <span className="bg-gradient-to-r from-white to-primary-soft bg-clip-text text-transparent">perfecte fiets</span>
           </h1>
           <p className="mt-4 text-lg text-header-foreground/80 max-w-xl">
             Meer dan 84.000 nieuwe en gebruikte fietsen van particulieren en dealers.
