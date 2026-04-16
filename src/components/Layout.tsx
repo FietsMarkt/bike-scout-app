@@ -10,7 +10,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
 
   if (isApp) {
     return (
-      <div className="min-h-screen flex flex-col bg-background">
+      <div className="dark min-h-screen flex flex-col bg-background text-foreground">
         <main className="flex-1 pb-24">{children}</main>
         <BottomTabBar />
       </div>
