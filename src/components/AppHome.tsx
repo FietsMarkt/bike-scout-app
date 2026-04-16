@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Search, MapPin, Route, Mountain, Zap, Building2, Wind, Baby, Boxes, Sailboat,
-  ShieldCheck, Users, Store, Sparkles, ArrowRight, TrendingUp, Heart,
+  ShieldCheck, Users, Store, ArrowRight, TrendingUp, Heart, ChevronRight,
+  Newspaper, Wrench, Tag, Bike as BikeIcon, Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,21 +16,31 @@ import { getOptimizedImage } from "@/lib/image";
 const fmt = new Intl.NumberFormat("nl-BE");
 
 const CATEGORIES = [
-  { label: "Racefiets", icon: Route, type: "Racefiets", color: "from-rose-500 to-orange-500" },
-  { label: "MTB", icon: Mountain, type: "Mountainbike", color: "from-emerald-500 to-teal-500" },
-  { label: "E-bike", icon: Zap, type: "E-bike", color: "from-amber-500 to-yellow-500" },
-  { label: "Stadsfiets", icon: Building2, type: "Stadsfiets", color: "from-sky-500 to-blue-500" },
-  { label: "Gravel", icon: Wind, type: "Gravel", color: "from-violet-500 to-fuchsia-500" },
-  { label: "Kinderfiets", icon: Baby, type: "Kinderfiets", color: "from-pink-500 to-rose-500" },
-  { label: "Vouwfiets", icon: Boxes, type: "Vouwfiets", color: "from-cyan-500 to-blue-500" },
-  { label: "Bakfiets", icon: Sailboat, type: "Bakfiets", color: "from-lime-500 to-emerald-500" },
+  { label: "Racefiets", icon: Route, type: "Racefiets", count: "12.4k" },
+  { label: "MTB", icon: Mountain, type: "Mountainbike", count: "9.8k" },
+  { label: "E-bike", icon: Zap, type: "E-bike", count: "18.2k" },
+  { label: "Stadsfiets", icon: Building2, type: "Stadsfiets", count: "15.1k" },
+  { label: "Gravel", icon: Wind, type: "Gravel", count: "4.6k" },
+  { label: "Kinderfiets", icon: Baby, type: "Kinderfiets", count: "6.3k" },
+  { label: "Vouwfiets", icon: Boxes, type: "Vouwfiets", count: "2.1k" },
+  { label: "Bakfiets", icon: Sailboat, type: "Bakfiets", count: "1.9k" },
+];
+
+const POPULAR_BRANDS = [
+  "Trek", "Specialized", "Cannondale", "Giant", "Cube", "Canyon", "Bianchi", "Scott",
+];
+
+const TIPS = [
+  { icon: ShieldCheck, title: "Veilig kopen", text: "Onze 7 tips tegen fraude" },
+  { icon: Wrench, title: "Onderhoud", text: "Houd je fiets in topvorm" },
+  { icon: Tag, title: "De juiste prijs", text: "Wat is jouw fiets waard?" },
 ];
 
 type EnrichedBike = { id: string; previous_price: number | null; created_at: string };
 
 /**
- * Premium app-style home with rich indigo gradient hero, category tiles,
- * top-deals horizontal carousel, latest feed, and trust badges.
+ * App home — minder druk, voller en overzichtelijker (zoals web-versie maar simpeler).
+ * Monochrome iconen in indigo huisstijl, geen kleurige tegels.
  */
 export const AppHome = () => {
   const nav = useNavigate();
@@ -66,29 +77,23 @@ export const AppHome = () => {
     .slice(0, 8);
 
   return (
-    <div className="-mt-12 pb-2">
-      {/* HERO — gradient */}
+    <div className="-mt-12 pb-2 bg-surface min-h-screen">
+      {/* HERO — gradient, compacter */}
       <section
         className="relative bg-gradient-hero text-header-foreground px-4 pb-5"
-        style={{ paddingTop: "calc(env(safe-area-inset-top) + 4rem)" }}
+        style={{ paddingTop: "calc(env(safe-area-inset-top) + 3.5rem)" }}
       >
-        {/* decorative glow */}
         <div className="absolute top-0 right-0 h-40 w-40 rounded-full bg-primary/30 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-10 left-0 h-32 w-32 rounded-full bg-primary/20 blur-3xl pointer-events-none" />
 
         <div className="relative">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-white/10 backdrop-blur px-3 py-1 text-[10px] font-bold uppercase tracking-wider mb-3">
-            <Sparkles className="h-3 w-3 text-primary" />
-            <span>Nº 1 fietsenmarkt Benelux</span>
-          </div>
           <h1 className="font-display text-2xl font-extrabold leading-tight">
-            Vind jouw <span className="bg-gradient-indigo bg-clip-text text-transparent">perfecte fiets</span>
+            Vind jouw <span className="text-primary-soft">perfecte fiets</span>
           </h1>
           <p className="text-xs text-header-foreground/70 mt-1">
             {count ? `${fmt.format(count)} advertenties` : "Doorzoek alle fietsen"} · particulier &amp; dealers
           </p>
 
-          <form onSubmit={onSearch} className="mt-4 rounded-2xl bg-card text-foreground p-2 shadow-elevated space-y-2">
+          <form onSubmit={onSearch} className="mt-3 rounded-2xl bg-card text-foreground p-2 shadow-elevated space-y-2">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -115,54 +120,52 @@ export const AppHome = () => {
               </Button>
             </div>
           </form>
+        </div>
+      </section>
 
-          {/* Trust micro-bar */}
-          <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-            <div className="rounded-xl bg-white/5 backdrop-blur px-2 py-2.5">
-              <ShieldCheck className="h-4 w-4 mx-auto text-success" />
-              <div className="text-[10px] font-bold mt-1">FietsGarant®</div>
-              <div className="text-[9px] text-header-foreground/60">tot € 10.000</div>
+      {/* TRUST STRIP — simpel zoals web TrustBar */}
+      <section className="bg-gradient-soft border-b border-border">
+        <div className="px-4 py-3 grid grid-cols-3 gap-2">
+          {[
+            { icon: ShieldCheck, title: "FietsGarant®", text: "tot € 10.000" },
+            { icon: Users, title: "180k kopers", text: "elke maand" },
+            { icon: Store, title: "1.200 dealers", text: "geverifieerd" },
+          ].map((i) => (
+            <div key={i.title} className="flex items-center gap-2">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary-soft text-primary">
+                <i.icon className="h-4 w-4" />
+              </span>
+              <div className="min-w-0">
+                <div className="text-[11px] font-bold leading-tight truncate">{i.title}</div>
+                <div className="text-[10px] text-muted-foreground leading-tight truncate">{i.text}</div>
+              </div>
             </div>
-            <div className="rounded-xl bg-white/5 backdrop-blur px-2 py-2.5">
-              <Users className="h-4 w-4 mx-auto text-primary" />
-              <div className="text-[10px] font-bold mt-1">180k kopers</div>
-              <div className="text-[9px] text-header-foreground/60">maandelijks</div>
-            </div>
-            <div className="rounded-xl bg-white/5 backdrop-blur px-2 py-2.5">
-              <Store className="h-4 w-4 mx-auto text-primary" />
-              <div className="text-[10px] font-bold mt-1">1.200 dealers</div>
-              <div className="text-[9px] text-header-foreground/60">geverifieerd</div>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
       {/* QUICK CHIPS */}
-      <div className="bg-card border-b border-border sticky top-12 z-20" style={{ top: "calc(env(safe-area-inset-top) + 3rem)" }}>
+      <div className="bg-card border-b border-border">
         <div className="px-4">
           <QuickFilterChips />
         </div>
       </div>
 
-      {/* CATEGORIES */}
+      {/* CATEGORIES — monochroom, zoals web */}
       <section className="px-4 pt-5">
-        <div className="flex items-end justify-between mb-3">
-          <h2 className="font-display text-base font-bold">Categorieën</h2>
-          <button onClick={() => nav("/zoeken")} className="text-xs font-semibold text-primary">
-            Alle →
-          </button>
-        </div>
+        <SectionHeader title="Categorieën" onMore={() => nav("/zoeken")} />
         <div className="grid grid-cols-4 gap-2">
           {CATEGORIES.map((c) => (
             <button
               key={c.label}
               onClick={() => nav(`/zoeken?type=${encodeURIComponent(c.type)}`)}
-              className="group flex flex-col items-center text-center rounded-2xl bg-card border border-border p-2.5 active:scale-95 transition-transform"
+              className="group flex flex-col items-center text-center rounded-xl bg-card border border-border p-2.5 active:scale-95 transition-transform"
             >
-              <span className={`grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br ${c.color} text-white shadow-md`}>
+              <span className="grid h-11 w-11 place-items-center rounded-full bg-primary-soft text-primary group-active:bg-gradient-indigo group-active:text-primary-foreground transition-smooth">
                 <c.icon className="h-5 w-5" />
               </span>
-              <span className="mt-1.5 text-[10px] font-bold leading-tight">{c.label}</span>
+              <span className="mt-1.5 text-[11px] font-semibold leading-tight">{c.label}</span>
+              <span className="text-[10px] text-muted-foreground">{c.count}</span>
             </button>
           ))}
         </div>
@@ -171,13 +174,12 @@ export const AppHome = () => {
       {/* TOP DEALS */}
       {topDeals.length > 0 && (
         <section className="pt-6">
-          <div className="px-4 flex items-end justify-between mb-3">
-            <h2 className="font-display text-base font-bold inline-flex items-center gap-1.5">
-              <TrendingUp className="h-4 w-4 text-success" /> Prijsverlagingen
-            </h2>
-            <button onClick={() => nav("/zoeken")} className="text-xs font-semibold text-primary">
-              Meer →
-            </button>
+          <div className="px-4">
+            <SectionHeader
+              icon={<TrendingUp className="h-4 w-4 text-success" />}
+              title="Prijsverlagingen"
+              onMore={() => nav("/zoeken")}
+            />
           </div>
           <div className="flex gap-3 overflow-x-auto px-4 pb-2 scrollbar-none snap-x">
             {topDeals.map((b) => {
@@ -188,7 +190,7 @@ export const AppHome = () => {
                 <button
                   key={b.id}
                   onClick={() => nav(`/fiets/${b.id}`)}
-                  className="snap-start shrink-0 w-44 rounded-2xl bg-card border border-border overflow-hidden text-left active:scale-[0.98] transition-transform"
+                  className="snap-start shrink-0 w-44 rounded-2xl bg-card border border-border overflow-hidden text-left active:scale-[0.98] transition-transform shadow-card"
                 >
                   <div className="relative aspect-square bg-muted">
                     <img src={getOptimizedImage(b.image, 400)} alt={b.title} loading="lazy" className="w-full h-full object-cover" />
@@ -219,14 +221,30 @@ export const AppHome = () => {
         </section>
       )}
 
-      {/* LATEST FEED */}
+      {/* POPULAIRE MERKEN — chips */}
       <section className="px-4 pt-6">
-        <div className="flex items-end justify-between mb-3">
-          <h2 className="font-display text-base font-bold">Nieuwste fietsen</h2>
-          <button onClick={() => nav("/zoeken")} className="text-xs font-semibold text-primary">
-            Alle →
-          </button>
+        <SectionHeader title="Populaire merken" onMore={() => nav("/zoeken")} />
+        <div className="flex flex-wrap gap-2">
+          {POPULAR_BRANDS.map((brand) => (
+            <button
+              key={brand}
+              onClick={() => nav(`/zoeken?brand=${encodeURIComponent(brand)}`)}
+              className="inline-flex items-center gap-1.5 rounded-full bg-card border border-border px-3 py-1.5 text-xs font-semibold active:scale-95 transition-transform"
+            >
+              <BikeIcon className="h-3 w-3 text-primary" />
+              {brand}
+            </button>
+          ))}
         </div>
+      </section>
+
+      {/* LATEST FEED — 2-koloms, zoals web grid maar compacter */}
+      <section className="px-4 pt-6">
+        <SectionHeader
+          icon={<Clock className="h-4 w-4 text-primary" />}
+          title="Nieuwste fietsen"
+          onMore={() => nav("/zoeken")}
+        />
 
         {isLoading ? (
           <div className="grid grid-cols-2 gap-2.5">
@@ -280,6 +298,76 @@ export const AppHome = () => {
           </div>
         )}
       </section>
+
+      {/* DEALERS CTA */}
+      <section className="px-4 pt-6">
+        <button
+          onClick={() => nav("/zoeken")}
+          className="w-full rounded-2xl bg-gradient-indigo text-primary-foreground p-4 text-left shadow-elevated active:scale-[0.99] transition-transform flex items-center gap-3"
+        >
+          <span className="grid h-11 w-11 place-items-center rounded-xl bg-white/15 backdrop-blur shrink-0">
+            <Store className="h-5 w-5" />
+          </span>
+          <div className="flex-1 min-w-0">
+            <div className="font-display text-sm font-bold">Geverifieerde dealers</div>
+            <div className="text-[11px] text-primary-foreground/80">1.200 vakmensen bij jou in de buurt</div>
+          </div>
+          <ChevronRight className="h-5 w-5 opacity-70" />
+        </button>
+      </section>
+
+      {/* TIPS / GIDS */}
+      <section className="px-4 pt-6">
+        <SectionHeader
+          icon={<Newspaper className="h-4 w-4 text-primary" />}
+          title="Gids &amp; tips"
+        />
+        <div className="space-y-2">
+          {TIPS.map((t) => (
+            <button
+              key={t.title}
+              onClick={() => nav("/info")}
+              className="w-full flex items-center gap-3 rounded-xl bg-card border border-border p-3 text-left active:scale-[0.99] transition-transform"
+            >
+              <span className="grid h-10 w-10 place-items-center rounded-lg bg-primary-soft text-primary shrink-0">
+                <t.icon className="h-4 w-4" />
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-semibold leading-tight">{t.title}</div>
+                <div className="text-[11px] text-muted-foreground truncate">{t.text}</div>
+              </div>
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* FOOTER MICRO */}
+      <div className="px-4 pt-8 pb-4 text-center text-[10px] text-muted-foreground">
+        © Fietsmarkt · Nº 1 fietsenmarkt Benelux
+      </div>
     </div>
   );
 };
+
+const SectionHeader = ({
+  title,
+  icon,
+  onMore,
+}: {
+  title: string;
+  icon?: React.ReactNode;
+  onMore?: () => void;
+}) => (
+  <div className="flex items-end justify-between mb-3">
+    <h2 className="font-display text-base font-bold inline-flex items-center gap-1.5">
+      {icon}
+      {title}
+    </h2>
+    {onMore && (
+      <button onClick={onMore} className="text-xs font-semibold text-primary inline-flex items-center gap-0.5">
+        Alle <ChevronRight className="h-3 w-3" />
+      </button>
+    )}
+  </div>
+);
