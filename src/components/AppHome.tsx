@@ -20,27 +20,29 @@ export const AppHome = () => {
   }, []);
 
   return (
-    <div className="pb-2 bg-surface min-h-screen">
-      {/* HEADER — zelfde stijl als webversie: rounded gradient logo + naam */}
+    <div className="pb-2 bg-background min-h-screen">
+      {/* HEADER — modern, minimal, fijn lettertype */}
       <section
-        className="bg-header text-header-foreground px-5 pb-6"
-        style={{ paddingTop: "calc(env(safe-area-inset-top) + 1rem)" }}
+        className="bg-background px-5 pb-5 border-b border-border/40"
+        style={{ paddingTop: "calc(env(safe-area-inset-top) + 0.875rem)" }}
       >
-        <div className="flex items-center gap-3">
-          <span className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-indigo shadow-elevated">
-            <Bike className="h-6 w-6 text-primary-foreground" strokeWidth={2.25} />
-          </span>
-          <h1 className="font-display text-3xl font-extrabold tracking-tight">
-            Fiets<span className="text-primary">Markt</span>
-          </h1>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-indigo">
+              <Bike className="h-[18px] w-[18px] text-primary-foreground" strokeWidth={2} />
+            </span>
+            <h1 className="font-display text-[22px] font-semibold tracking-tight leading-none">
+              Fiets<span className="text-primary font-medium">markt</span>
+            </h1>
+          </div>
         </div>
 
         <button
           onClick={() => nav("/zoeken")}
-          className="mt-5 w-full h-14 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center gap-3 shadow-elevated active:scale-[0.99] transition-transform"
+          className="mt-5 w-full h-[52px] rounded-2xl bg-card border border-border/60 flex items-center gap-3 px-5 text-left active:scale-[0.99] transition-transform"
         >
-          <Search className="h-5 w-5" strokeWidth={2.5} />
-          <span className="font-display text-lg font-bold">Zoek nu</span>
+          <Search className="h-[18px] w-[18px] text-muted-foreground" strokeWidth={2} />
+          <span className="text-[15px] font-normal text-muted-foreground">Zoek merk, model of trefwoord</span>
         </button>
       </section>
 
