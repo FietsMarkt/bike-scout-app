@@ -13,6 +13,11 @@
     "menu": "Menü",
     "language": "Sprache"
   },
+  "theme": {
+    "toggle": "Design wechseln",
+    "light": "Hell",
+    "dark": "Dunkel"
+  },
   "hero": {
     "tagline": "Nr. 1 Fahrradmarkt der Benelux",
     "title": "Finde dein",
@@ -85,6 +90,10 @@
     "all": "Alle",
     "back": "Zurück",
     "share": "Teilen",
-    "contact": "Verkäufer kontaktieren"
+    "contact": "Verkäufer kontaktieren",
+    "dealOfWeek": "Deal der Woche",
+    "priceDropped": "Preis gesenkt",
+    "activeFilters": "Aktive Filter",
+    "removeFilter": "Filter entfernen"
   }
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { ChevronLeft, ChevronRight, Trash2, Tag, MapPin, Calendar, Gauge, Bike as BikeIcon, Zap } from "lucide-react";
+import { ChevronLeft, ChevronRight, Trash2, Tag, MapPin, Calendar, Gauge, Bike as BikeIcon, Zap, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -66,12 +66,19 @@ export const AppSearch = () => {
 
   const clearAll = () => { setParams(new URLSearchParams()); setShowResults(false); };
 
-  const activeFilters = [
-    type !== "Alle types" && type,
-    brand !== "Alle merken" && brand,
-    maxPrice > 0 && `tot € ${maxPrice.toLocaleString("nl-BE")}`,
-    q && `"${q}"`,
-  ].filter(Boolean) as string[];
+  // Chips: { key, label, onRemove } so users can remove individual filters
+  const chips: { key: string; label: string; onRemove: () => void }[] = [
+    q && { key: "q", label: `"${q}"`, onRemove: () => setParam("q", "") },
+    type !== "Alle types" && { key: "type", label: type, onRemove: () => setParam("type", "Alle types") },
+    brand !== "Alle merken" && { key: "brand", label: brand, onRemove: () => setParam("brand", "Alle merken") },
+    maxPrice > 0 && { key: "maxPrice", label: `≤ € ${maxPrice.toLocaleString("nl-BE")}`, onRemove: () => setParam("maxPrice", "0") },
+    city && { key: "city", label: city, onRemove: () => setParam("city", "") },
+    motor !== "Alle" && { key: "motor", label: motor, onRemove: () => setParam("motor", "Alle") },
+    minYear > 0 && { key: "minYear", label: `≥ ${minYear}`, onRemove: () => setParam("minYear", "0") },
+    maxKm > 0 && { key: "maxKm", label: `≤ ${maxKm.toLocaleString("nl-BE")} km`, onRemove: () => setParam("maxKm", "0") },
+  ].filter(Boolean) as { key: string; label: string; onRemove: () => void }[];
+
+  const activeFilters = chips.map((c) => c.label);
 
   const saveSearch = async () => {
     if (!user) { nav("/inloggen"); return; }
@@ -114,6 +121,28 @@ export const AppSearch = () => {
               </SelectContent>
             </Select>
           </div>
+          {chips.length > 0 && (
+            <div className="px-4 pb-3 flex gap-1.5 overflow-x-auto scrollbar-none">
+              {chips.map((c) => (
+                <button
+                  key={c.key}
+                  onClick={c.onRemove}
+                  className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-card text-foreground px-3 py-1 text-xs font-semibold active:scale-95 transition-transform"
+                >
+                  <span className="max-w-[140px] truncate">{c.label}</span>
+                  <X className="h-3 w-3 opacity-70" strokeWidth={2.5} />
+                </button>
+              ))}
+              {chips.length > 1 && (
+                <button
+                  onClick={clearAll}
+                  className="shrink-0 inline-flex items-center rounded-full bg-transparent border border-header-foreground/30 px-3 py-1 text-xs font-semibold opacity-80"
+                >
+                  Wis alles
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="px-4 pt-3 space-y-2.5">

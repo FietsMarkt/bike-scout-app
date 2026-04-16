@@ -1,30 +1,73 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Search, Heart, Bike } from "lucide-react";
+import { Search, Heart, Bike, Flame, TrendingDown } from "lucide-react";
 import { useBikes } from "@/hooks/useBikes";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { getOptimizedImage } from "@/lib/image";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { supabase } from "@/integrations/supabase/client";
 
 const fmt = new Intl.NumberFormat("nl-BE");
 
+type DealRow = {
+  id: string;
+  title: string;
+  price: number;
+  previous_price: number | null;
+  city: string;
+  year: number;
+  km: number | null;
+  images: string[];
+};
+
 /**
- * App home — header zoals webversie (logo + naam) + grote "Zoek nu"-knop + grid.
+ * App home — header + grote "Zoek nu"-knop + Deal van de week + grid.
  */
 export const AppHome = () => {
   const nav = useNavigate();
   const fav = useFavorites();
   const { t } = useTranslation();
   const { data: latest = [], isLoading } = useBikes({ sort: "relevance" });
+  const [deal, setDeal] = useState<DealRow | null>(null);
 
   useEffect(() => {
     document.title = "Fietsmarkt";
   }, []);
 
+  // Zoek de fiets met de grootste prijsdaling.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("bikes")
+        .select("id, title, price, previous_price, city, year, km, images")
+        .eq("status", "active")
+        .not("previous_price", "is", null)
+        .limit(50);
+      if (cancelled || !data) return;
+      const best = (data as DealRow[])
+        .filter((b) => b.previous_price && b.previous_price > b.price)
+        .sort((a, b) => {
+          const dropA = ((a.previous_price ?? 0) - a.price) / (a.previous_price ?? 1);
+          const dropB = ((b.previous_price ?? 0) - b.price) / (b.previous_price ?? 1);
+          return dropB - dropA;
+        })[0];
+      setDeal(best ?? null);
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  const dealDrop = useMemo(() => {
+    if (!deal?.previous_price) return null;
+    const diff = deal.previous_price - deal.price;
+    const pct = Math.round((diff / deal.previous_price) * 100);
+    return { diff, pct };
+  }, [deal]);
+
   return (
     <div className="pb-2 bg-background min-h-screen">
-      {/* HEADER — modern, minimal, fijn lettertype */}
+      {/* HEADER */}
       <section
         className="bg-background px-5 pb-5 border-b border-border/40 relative"
         style={{ paddingTop: "calc(env(safe-area-inset-top) + 0.875rem)" }}
@@ -51,6 +94,44 @@ export const AppHome = () => {
           <span className="text-[15px] font-normal text-muted-foreground">{t("app.searchNow")}</span>
         </button>
       </section>
+
+      {/* DEAL VAN DE WEEK */}
+      {deal && dealDrop && dealDrop.diff > 0 && (
+        <section className="px-3 pt-5">
+          <div className="px-1 mb-3 flex items-center gap-2">
+            <Flame className="h-5 w-5 text-primary" />
+            <h2 className="font-display text-xl font-extrabold">{t("app.dealOfWeek")}</h2>
+          </div>
+          <button
+            onClick={() => nav(`/fiets/${deal.id}`)}
+            className="w-full text-left rounded-3xl overflow-hidden bg-card border border-border shadow-elevated active:scale-[0.99] transition-transform relative"
+          >
+            <div className="relative aspect-[16/10] bg-muted">
+              <img
+                src={getOptimizedImage(deal.images?.[0] ?? "", 800)}
+                alt={deal.title}
+                className="w-full h-full object-cover"
+              />
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+              {/* Discount badge */}
+              <div className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-destructive text-destructive-foreground px-3 py-1.5 text-xs font-extrabold shadow-lg">
+                <TrendingDown className="h-3.5 w-3.5" strokeWidth={2.5} />
+                −{dealDrop.pct}%
+              </div>
+              {/* Bottom info */}
+              <div className="absolute bottom-0 inset-x-0 p-4 text-white">
+                <div className="font-display text-lg font-bold line-clamp-1">{deal.title}</div>
+                <div className="mt-1 flex items-baseline gap-2">
+                  <span className="font-display text-2xl font-extrabold">€ {fmt.format(deal.price)}</span>
+                  <span className="text-sm line-through opacity-70">€ {fmt.format(deal.previous_price!)}</span>
+                </div>
+                <div className="mt-1 text-xs opacity-90">{deal.city} · {deal.year}{deal.km ? ` · ${fmt.format(deal.km)} km` : ""}</div>
+              </div>
+            </div>
+          </button>
+        </section>
+      )}
 
       {/* LAATST BEKEKEN */}
       <section className="px-3 pt-5">

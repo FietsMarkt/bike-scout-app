@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Search from "./pages/Search.tsx";
@@ -25,10 +26,11 @@ const queryClient = new QueryClient({
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <BrowserRouter>
-        <AuthProvider>
-          <FavoritesProvider>
+    <ThemeProvider>
+      <TooltipProvider>
+        <BrowserRouter>
+          <AuthProvider>
+            <FavoritesProvider>
             <Toaster />
             <Sonner />
             <Routes>
@@ -48,10 +50,11 @@ const App = () => (
               <Route path="/verkopen" element={<SellGuide />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </FavoritesProvider>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
+            </FavoritesProvider>
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

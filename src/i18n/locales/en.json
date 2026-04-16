@@ -13,6 +13,11 @@
     "menu": "Menu",
     "language": "Language"
   },
+  "theme": {
+    "toggle": "Toggle theme",
+    "light": "Light",
+    "dark": "Dark"
+  },
   "hero": {
     "tagline": "Nº 1 bike marketplace in the Benelux",
     "title": "Find your",
@@ -85,6 +90,10 @@
     "all": "All",
     "back": "Back",
     "share": "Share",
-    "contact": "Contact seller"
+    "contact": "Contact seller",
+    "dealOfWeek": "Deal of the week",
+    "priceDropped": "Price reduced",
+    "activeFilters": "Active filters",
+    "removeFilter": "Remove filter"
   }
 }
