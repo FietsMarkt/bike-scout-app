@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Bike, Mountain, Zap, Building2, Route, Baby, Bot, Boxes,
   Waves, Wind, Snowflake, Sailboat, Armchair, Wrench,
@@ -26,16 +27,17 @@ const categories = [
 ];
 
 export const Categories = () => {
+  const { t } = useTranslation();
   return (
     <section className="border-y border-border bg-surface">
       <div className="container py-10">
         <div className="flex items-end justify-between mb-6">
           <div>
-            <h2 className="font-display text-2xl md:text-3xl font-bold">Bladeren per categorie</h2>
-            <p className="text-sm text-muted-foreground mt-1">Vind precies de fiets die bij jou past</p>
+            <h2 className="font-display text-2xl md:text-3xl font-bold">{t("categories.title")}</h2>
+            <p className="text-sm text-muted-foreground mt-1">{t("categories.subtitle")}</p>
           </div>
           <Link to="/zoeken" className="hidden md:inline text-sm font-semibold text-primary hover:underline">
-            Alle categorieën →
+            {t("categories.viewAll")}
           </Link>
         </div>
 

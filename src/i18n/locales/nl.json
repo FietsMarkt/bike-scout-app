@@ -1,0 +1,70 @@
+{
+  "nav": {
+    "buyBikes": "Fietsen kopen",
+    "sellBike": "Fiets verkopen",
+    "parts": "Onderdelen",
+    "dealers": "Dealers",
+    "magazine": "Magazine",
+    "favorites": "Favorieten",
+    "login": "Inloggen",
+    "logout": "Uitloggen",
+    "myAds": "Mijn advertenties",
+    "placeBike": "Plaats fiets",
+    "menu": "Menu",
+    "language": "Taal"
+  },
+  "hero": {
+    "tagline": "Nº 1 fietsenmarkt van de Benelux",
+    "title": "Vind jouw",
+    "titleHighlight": "perfecte fiets",
+    "subtitle": "Meer dan 84.000 nieuwe en gebruikte fietsen van particulieren en dealers.",
+    "tabBuy": "Fiets kopen",
+    "tabSell": "Fiets verkopen",
+    "type": "Type",
+    "brand": "Merk",
+    "priceUpTo": "Prijs tot",
+    "postcode": "Postcode",
+    "search": "Zoeken",
+    "place": "Plaatsen",
+    "results": "{{count}} resultaten",
+    "advancedSearch": "Geavanceerd zoeken",
+    "savedSearches": "Bewaarde zoekopdrachten"
+  },
+  "categories": {
+    "title": "Bladeren per categorie",
+    "subtitle": "Vind precies de fiets die bij jou past",
+    "viewAll": "Alle categorieën →"
+  },
+  "featured": {
+    "kicker": "Aanbevolen",
+    "title": "Topfietsen voor jou",
+    "subtitle": "De nieuwste advertenties op FietsMarkt",
+    "viewAll": "Bekijk alle fietsen",
+    "empty": "Nog geen fietsen geplaatst.",
+    "placeFirst": "Plaats de eerste fiets"
+  },
+  "trust": {
+    "secureTitle": "Veilig betalen",
+    "secureText": "Met FietsGarant® bescherming tot € 10.000",
+    "buyersTitle": "180.000 kopers",
+    "buyersText": "Maandelijks actief op het platform",
+    "dealersTitle": "Geverifieerde dealers",
+    "dealersText": "Meer dan 1.200 erkende fietswinkels"
+  },
+  "footer": {
+    "tagline": "De grootste online marktplaats voor nieuwe en gebruikte fietsen in de Benelux.",
+    "buy": "Kopen",
+    "sell": "Verkopen",
+    "service": "Service",
+    "company": "Bedrijf",
+    "rights": "Alle rechten voorbehouden.",
+    "privacy": "Privacy",
+    "terms": "Voorwaarden",
+    "cookies": "Cookies"
+  },
+  "card": {
+    "addFav": "Toevoegen aan favorieten",
+    "removeFav": "Verwijder uit favorieten",
+    "dealer": "Dealer"
+  }
+}

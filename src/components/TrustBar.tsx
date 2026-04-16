@@ -1,12 +1,14 @@
 import { ShieldCheck, Users, Sparkles } from "lucide-react";
-
-const items = [
-  { icon: ShieldCheck, title: "Veilig betalen", text: "Met FietsGarant® bescherming tot € 10.000" },
-  { icon: Users, title: "180.000 kopers", text: "Maandelijks actief op het platform" },
-  { icon: Sparkles, title: "Geverifieerde dealers", text: "Meer dan 1.200 erkende fietswinkels" },
-];
+import { useTranslation } from "react-i18next";
 
 export const TrustBar = () => {
+  const { t } = useTranslation();
+  const items = [
+    { icon: ShieldCheck, title: t("trust.secureTitle"), text: t("trust.secureText") },
+    { icon: Users, title: t("trust.buyersTitle"), text: t("trust.buyersText") },
+    { icon: Sparkles, title: t("trust.dealersTitle"), text: t("trust.dealersText") },
+  ];
+
   return (
     <section className="bg-gradient-soft border-y border-border">
       <div className="container py-10 grid grid-cols-1 md:grid-cols-3 gap-6">

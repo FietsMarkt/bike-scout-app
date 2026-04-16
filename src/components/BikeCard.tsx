@@ -1,4 +1,5 @@
 import { Heart, MapPin, Calendar, Gauge, Zap } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { useFavorites } from "@/contexts/FavoritesContext";
 
@@ -16,11 +17,13 @@ export type Bike = {
   dealer?: boolean;
 };
 
-const fmt = new Intl.NumberFormat("nl-NL");
+const localeMap: Record<string, string> = { nl: "nl-NL", en: "en-GB", de: "de-DE", fr: "fr-FR" };
 
 export const BikeCard = ({ bike }: { bike: Bike }) => {
   const { toggle, has } = useFavorites();
+  const { t, i18n } = useTranslation();
   const isFav = has(bike.id);
+  const fmt = new Intl.NumberFormat(localeMap[i18n.resolvedLanguage ?? "nl"] ?? "nl-NL");
 
   const onFav = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -43,7 +46,7 @@ export const BikeCard = ({ bike }: { bike: Bike }) => {
           </Badge>
         )}
         <button
-          aria-label={isFav ? "Verwijder uit favorieten" : "Toevoegen aan favorieten"}
+          aria-label={isFav ? t("card.removeFav") : t("card.addFav")}
           onClick={onFav}
           className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-card/90 backdrop-blur hover:bg-card transition-smooth"
         >
@@ -51,7 +54,7 @@ export const BikeCard = ({ bike }: { bike: Bike }) => {
         </button>
         {bike.dealer && (
           <span className="absolute bottom-3 left-3 rounded-md bg-card/95 px-2 py-1 text-[10px] font-bold uppercase tracking-wide">
-            Dealer
+            {t("card.dealer")}
           </span>
         )}
       </div>

@@ -1,0 +1,70 @@
+{
+  "nav": {
+    "buyBikes": "Acheter un vélo",
+    "sellBike": "Vendre un vélo",
+    "parts": "Pièces",
+    "dealers": "Revendeurs",
+    "magazine": "Magazine",
+    "favorites": "Favoris",
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "myAds": "Mes annonces",
+    "placeBike": "Publier un vélo",
+    "menu": "Menu",
+    "language": "Langue"
+  },
+  "hero": {
+    "tagline": "N° 1 du marché du vélo au Benelux",
+    "title": "Trouvez votre",
+    "titleHighlight": "vélo parfait",
+    "subtitle": "Plus de 84 000 vélos neufs et d'occasion de particuliers et revendeurs.",
+    "tabBuy": "Acheter un vélo",
+    "tabSell": "Vendre un vélo",
+    "type": "Type",
+    "brand": "Marque",
+    "priceUpTo": "Prix jusqu'à",
+    "postcode": "Code postal",
+    "search": "Rechercher",
+    "place": "Publier",
+    "results": "{{count}} résultats",
+    "advancedSearch": "Recherche avancée",
+    "savedSearches": "Recherches sauvegardées"
+  },
+  "categories": {
+    "title": "Parcourir par catégorie",
+    "subtitle": "Trouvez exactement le vélo qui vous convient",
+    "viewAll": "Toutes les catégories →"
+  },
+  "featured": {
+    "kicker": "Recommandé",
+    "title": "Vélos populaires pour vous",
+    "subtitle": "Les dernières annonces sur FietsMarkt",
+    "viewAll": "Voir tous les vélos",
+    "empty": "Aucun vélo publié pour le moment.",
+    "placeFirst": "Publier le premier vélo"
+  },
+  "trust": {
+    "secureTitle": "Paiement sécurisé",
+    "secureText": "Protection FietsGarant® jusqu'à 10 000 €",
+    "buyersTitle": "180 000 acheteurs",
+    "buyersText": "Actifs chaque mois sur la plateforme",
+    "dealersTitle": "Revendeurs vérifiés",
+    "dealersText": "Plus de 1 200 magasins de vélos agréés"
+  },
+  "footer": {
+    "tagline": "La plus grande marketplace en ligne de vélos neufs et d'occasion au Benelux.",
+    "buy": "Acheter",
+    "sell": "Vendre",
+    "service": "Service",
+    "company": "Entreprise",
+    "rights": "Tous droits réservés.",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "cookies": "Cookies"
+  },
+  "card": {
+    "addFav": "Ajouter aux favoris",
+    "removeFav": "Retirer des favoris",
+    "dealer": "Revendeur"
+  }
+}
