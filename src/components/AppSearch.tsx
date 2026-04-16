@@ -333,11 +333,7 @@ const YearRow = ({ minYear, onChange }: { minYear: number; onChange: (v: number)
       label="Bouwjaar"
       value={minYear > 0 ? `vanaf ${minYear}` : undefined}
     >
-      <div className="text-center font-display text-xl font-extrabold">
-        {minYear > 0 ? `vanaf ${minYear}` : "Alle bouwjaren"}
-      </div>
       <Slider
-        className="mt-3"
         min={1990}
         max={currentYear}
         step={1}
@@ -346,6 +342,9 @@ const YearRow = ({ minYear, onChange }: { minYear: number; onChange: (v: number)
       />
       <div className="mt-2 flex justify-between text-xs text-muted-foreground">
         <span>1990</span>
+        <span className="font-display font-bold text-foreground text-sm">
+          {minYear > 0 ? `vanaf ${minYear}` : "Alle"}
+        </span>
         <span>{currentYear}</span>
       </div>
     </RowShell>
