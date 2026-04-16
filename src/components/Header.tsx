@@ -1,26 +1,29 @@
 import { Bike, Search, Heart, User, Menu, Plus, X, LogOut, LayoutGrid } from "lucide-react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const navLinks = [
-  { label: "Fietsen kopen", to: "/zoeken" },
-  { label: "Fiets verkopen", to: "/verkopen" },
-  { label: "Onderdelen", to: "/zoeken?type=Onderdelen" },
-  { label: "Dealers", to: "/dealers" },
-  { label: "Magazine", to: "/magazine" },
-];
-
 export const Header = () => {
   const { count } = useFavorites();
   const { user, signOut } = useAuth();
+  const { t } = useTranslation();
   const nav = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const navLinks = [
+    { label: t("nav.buyBikes"), to: "/zoeken" },
+    { label: t("nav.sellBike"), to: "/verkopen" },
+    { label: t("nav.parts"), to: "/zoeken?type=Onderdelen" },
+    { label: t("nav.dealers"), to: "/dealers" },
+    { label: t("nav.magazine"), to: "/magazine" },
+  ];
 
   const handleSignOut = async () => {
     await signOut();
@@ -66,6 +69,8 @@ export const Header = () => {
             )}
           </Link>
 
+          <LanguageSwitcher />
+
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -77,26 +82,26 @@ export const Header = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 bg-card">
-                <DropdownMenuItem asChild><Link to="/mijn-fietsen"><LayoutGrid className="h-4 w-4 mr-2" /> Mijn advertenties</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/favorieten"><Heart className="h-4 w-4 mr-2" /> Favorieten</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/mijn-fietsen"><LayoutGrid className="h-4 w-4 mr-2" /> {t("nav.myAds")}</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/favorieten"><Heart className="h-4 w-4 mr-2" /> {t("nav.favorites")}</Link></DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut}><LogOut className="h-4 w-4 mr-2" /> Uitloggen</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleSignOut}><LogOut className="h-4 w-4 mr-2" /> {t("nav.logout")}</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <Link to="/inloggen" className="hidden sm:inline-flex">
               <Button variant="ghost" size="sm" className="text-header-foreground hover:bg-white/10 hover:text-header-foreground gap-2">
-                <User className="h-4 w-4" /> Inloggen
+                <User className="h-4 w-4" /> {t("nav.login")}
               </Button>
             </Link>
           )}
 
           <Link to="/plaatsen" className="hidden md:inline-flex">
-            <Button variant="hero" size="sm" className="gap-1"><Plus className="h-4 w-4" /> Plaats fiets</Button>
+            <Button variant="hero" size="sm" className="gap-1"><Plus className="h-4 w-4" /> {t("nav.placeBike")}</Button>
           </Link>
           <Button variant="ghost" size="icon"
             className="lg:hidden text-header-foreground hover:bg-white/10 hover:text-header-foreground"
-            onClick={() => setMobileOpen((o) => !o)} aria-label="Menu">
+            onClick={() => setMobileOpen((o) => !o)} aria-label={t("nav.menu")}>
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
         </div>
@@ -114,25 +119,25 @@ export const Header = () => {
             <div className="border-t border-white/10 my-2" />
             <Link to="/favorieten" onClick={() => setMobileOpen(false)}
               className="px-3 py-3 rounded-md text-sm font-medium text-header-foreground/90 hover:bg-white/10 flex items-center justify-between">
-              <span className="inline-flex items-center gap-2"><Heart className="h-4 w-4" /> Favorieten</span>
+              <span className="inline-flex items-center gap-2"><Heart className="h-4 w-4" /> {t("nav.favorites")}</span>
               {count > 0 && <span className="rounded-full bg-primary px-2 text-xs font-bold">{count}</span>}
             </Link>
             {user ? (
               <>
                 <Link to="/mijn-fietsen" onClick={() => setMobileOpen(false)} className="px-3 py-3 rounded-md text-sm font-medium text-header-foreground/90 hover:bg-white/10 inline-flex items-center gap-2">
-                  <LayoutGrid className="h-4 w-4" /> Mijn advertenties
+                  <LayoutGrid className="h-4 w-4" /> {t("nav.myAds")}
                 </Link>
                 <button onClick={() => { setMobileOpen(false); handleSignOut(); }} className="text-left px-3 py-3 rounded-md text-sm font-medium text-header-foreground/90 hover:bg-white/10 inline-flex items-center gap-2">
-                  <LogOut className="h-4 w-4" /> Uitloggen
+                  <LogOut className="h-4 w-4" /> {t("nav.logout")}
                 </button>
               </>
             ) : (
               <Link to="/inloggen" onClick={() => setMobileOpen(false)} className="px-3 py-3 rounded-md text-sm font-medium text-header-foreground/90 hover:bg-white/10 inline-flex items-center gap-2">
-                <User className="h-4 w-4" /> Inloggen
+                <User className="h-4 w-4" /> {t("nav.login")}
               </Link>
             )}
             <Link to="/plaatsen" onClick={() => setMobileOpen(false)} className="mt-2">
-              <Button variant="hero" className="w-full gap-1"><Plus className="h-4 w-4" /> Plaats fiets</Button>
+              <Button variant="hero" className="w-full gap-1"><Plus className="h-4 w-4" /> {t("nav.placeBike")}</Button>
             </Link>
           </div>
         </div>

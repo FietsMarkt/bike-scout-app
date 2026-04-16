@@ -6,8 +6,10 @@ import { Search, MapPin } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { BIKE_TYPES, BIKE_BRANDS, PRICE_OPTIONS } from "@/lib/constants";
+import { useTranslation } from "react-i18next";
 
 export const Hero = () => {
+  const { t } = useTranslation();
   const nav = useNavigate();
   const [tab, setTab] = useState<"kopen" | "verkopen">("kopen");
   const [type, setType] = useState(BIKE_TYPES[0]);
@@ -37,13 +39,13 @@ export const Hero = () => {
       <div className="container relative py-16 md:py-24">
         <div className="max-w-3xl">
           <span className="inline-block rounded-full bg-white/10 backdrop-blur px-3 py-1 text-xs font-semibold tracking-wide uppercase">
-            Nº 1 fietsenmarkt van de Benelux
+            {t("hero.tagline")}
           </span>
           <h1 className="mt-4 font-display text-4xl md:text-6xl font-extrabold leading-[1.05]">
-            Vind jouw <span className="bg-gradient-to-r from-white to-primary-soft bg-clip-text text-transparent">perfecte fiets</span>
+            {t("hero.title")} <span className="bg-gradient-to-r from-white to-primary-soft bg-clip-text text-transparent">{t("hero.titleHighlight")}</span>
           </h1>
           <p className="mt-4 text-lg text-header-foreground/80 max-w-xl">
-            Meer dan 84.000 nieuwe en gebruikte fietsen van particulieren en dealers.
+            {t("hero.subtitle")}
           </p>
         </div>
 
@@ -56,7 +58,7 @@ export const Hero = () => {
                   tab === t ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {t === "kopen" ? "Fiets kopen" : "Fiets verkopen"}
+                {t === "kopen" ? (useTranslation().t("hero.tabBuy")) : (useTranslation().t("hero.tabSell"))}
               </button>
             ))}
           </div>
