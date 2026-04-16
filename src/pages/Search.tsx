@@ -13,8 +13,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { createSavedSearch } from "@/lib/savedSearches";
 import { useToast } from "@/hooks/use-toast";
 import { SlidersHorizontal, X, Bookmark } from "lucide-react";
+import { useStandalone } from "@/hooks/useStandalone";
+import { AppSearch } from "@/components/AppSearch";
 
 const Search = () => {
+  const isApp = useStandalone();
   const [params, setParams] = useSearchParams();
   const [open, setOpen] = useState(false);
   const { user } = useAuth();
@@ -98,6 +101,10 @@ const Search = () => {
       </Button>
     </aside>
   );
+
+  if (isApp) {
+    return <Layout><AppSearch /></Layout>;
+  }
 
   return (
     <Layout>

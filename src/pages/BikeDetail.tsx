@@ -12,10 +12,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { getOrCreateConversation } from "@/lib/chat";
 import { getOptimizedImage } from "@/lib/image";
+import { useStandalone } from "@/hooks/useStandalone";
+import { AppBikeDetail } from "@/components/AppBikeDetail";
 
 const fmt = new Intl.NumberFormat("nl-BE");
 
 const BikeDetail = () => {
+  const isApp = useStandalone();
   const { id } = useParams();
   const nav = useNavigate();
   const { toast } = useToast();
@@ -31,6 +34,10 @@ const BikeDetail = () => {
   const [contacting, setContacting] = useState(false);
 
   useEffect(() => { if (bike) document.title = `${bike.title} | FietsMarkt`; }, [bike]);
+
+  if (isApp) {
+    return <Layout><AppBikeDetail /></Layout>;
+  }
 
   if (isLoading) {
     return <Layout><div className="container py-20 text-center text-muted-foreground">Laden…</div></Layout>;
