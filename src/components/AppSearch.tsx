@@ -254,14 +254,14 @@ const PriceRow = ({ maxPrice, onChange }: { maxPrice: number; onChange: (v: numb
         <ChevronRight className="h-5 w-5 opacity-60" />
       </button>
     </SheetTrigger>
-    <SheetContent side="bottom" className="rounded-t-2xl">
-      <SheetHeader><SheetTitle>Maximale prijs</SheetTitle></SheetHeader>
-      <div className="mt-2 px-2">
-        <div className="text-center font-display text-2xl font-extrabold">
+    <SheetContent side="bottom" className="rounded-t-2xl p-4 pt-3">
+      <SheetHeader><SheetTitle className="text-base">Maximale prijs</SheetTitle></SheetHeader>
+      <div className="mt-3 px-1">
+        <Slider min={0} max={20000} step={250}
+          value={[maxPrice]} onValueChange={(v) => onChange(v[0] ?? 0)} />
+        <div className="mt-2 text-center font-display text-base font-bold">
           {maxPrice > 0 ? `€ ${maxPrice.toLocaleString("nl-BE")}` : "Geen limiet"}
         </div>
-        <Slider className="mt-3" min={0} max={20000} step={250}
-          value={[maxPrice]} onValueChange={(v) => onChange(v[0] ?? 0)} />
       </div>
     </SheetContent>
   </Sheet>
