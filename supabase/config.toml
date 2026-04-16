@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.match-saved-searches]
 verify_jwt = false
+
+[functions.suggest-price]
+verify_jwt = true
