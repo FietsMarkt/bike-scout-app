@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Heart } from "lucide-react";
+import { Search, Heart, Bike } from "lucide-react";
 import { useBikes } from "@/hooks/useBikes";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { getOptimizedImage } from "@/lib/image";
@@ -8,7 +8,7 @@ import { getOptimizedImage } from "@/lib/image";
 const fmt = new Intl.NumberFormat("nl-BE");
 
 /**
- * App home — AutoScout24-stijl: titel, grote "Zoek nu"-knop, daaronder grid.
+ * App home — header zoals webversie (logo + naam) + grote "Zoek nu"-knop + grid.
  */
 export const AppHome = () => {
   const nav = useNavigate();
@@ -21,15 +21,19 @@ export const AppHome = () => {
 
   return (
     <div className="pb-2 bg-surface min-h-screen">
-      {/* HEADER */}
+      {/* HEADER — zelfde stijl als webversie: rounded gradient logo + naam */}
       <section
-        className="bg-header text-header-foreground px-5 pb-5"
-        style={{ paddingTop: "calc(env(safe-area-inset-top) + 3.5rem)" }}
+        className="bg-header text-header-foreground px-5 pb-6"
+        style={{ paddingTop: "calc(env(safe-area-inset-top) + 1rem)" }}
       >
-        <h1 className="text-center font-display text-2xl font-extrabold tracking-tight">
-          <span className="bg-primary text-primary-foreground px-2 py-0.5 rounded-md">Fiets</span>
-          <span className="ml-1">Markt</span>
-        </h1>
+        <div className="flex items-center gap-3">
+          <span className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-indigo shadow-elevated">
+            <Bike className="h-6 w-6 text-primary-foreground" strokeWidth={2.25} />
+          </span>
+          <h1 className="font-display text-3xl font-extrabold tracking-tight">
+            Fiets<span className="text-primary">Markt</span>
+          </h1>
+        </div>
 
         <button
           onClick={() => nav("/zoeken")}
