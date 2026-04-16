@@ -66,5 +66,25 @@
     "addFav": "Add to favorites",
     "removeFav": "Remove from favorites",
     "dealer": "Dealer"
+  },
+  "app": {
+    "searchNow": "Search now",
+    "lastSearched": "Recently viewed",
+    "filters": "Filters",
+    "type": "Type",
+    "brand": "Brand",
+    "price": "Price",
+    "city": "City",
+    "motor": "Motor / E-bike",
+    "year": "Year",
+    "km": "Mileage",
+    "showResults": "Show results",
+    "clearAll": "Clear",
+    "saveSearch": "Save search",
+    "noResults": "No results",
+    "all": "All",
+    "back": "Back",
+    "share": "Share",
+    "contact": "Contact seller"
   }
 }
