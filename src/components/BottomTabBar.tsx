@@ -36,8 +36,8 @@ export const BottomTabBar = () => {
 
   const tabClass = (active: boolean) =>
     cn(
-      "relative flex flex-col items-center justify-center gap-0.5 flex-1 min-w-0 py-2 text-[10px] font-semibold transition-colors",
-      active ? "text-primary" : "text-header-foreground/60",
+      "relative flex flex-col items-center justify-center gap-1 flex-1 min-w-0 py-2 text-[11px] font-semibold transition-colors",
+      active ? "text-primary" : "text-header-foreground/70",
     );
 
   const isHome = pathname === "/";
@@ -47,20 +47,20 @@ export const BottomTabBar = () => {
 
   return (
     <nav
-      className="fixed bottom-0 inset-x-0 z-50 bg-header/95 backdrop-blur-xl border-t border-white/10 shadow-[0_-8px_32px_rgba(0,0,0,0.25)]"
+      className="fixed bottom-0 inset-x-0 z-50 bg-header/95 backdrop-blur-2xl border-t border-white/10 shadow-[0_-12px_40px_rgba(0,0,0,0.35)]"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       aria-label="Hoofdnavigatie"
     >
-      <div className="flex items-end h-[58px] max-w-md mx-auto px-1">
+      <div className="flex items-end h-[72px] max-w-md mx-auto px-2">
         <NavLink to="/" className={tabClass(isHome)} end>
-          {isHome && <span className="absolute top-0 h-0.5 w-8 rounded-full bg-primary" />}
-          <Home className="h-5 w-5" strokeWidth={isHome ? 2.5 : 2} />
+          {isHome && <span className="absolute top-0 h-1 w-10 rounded-b-full bg-primary" />}
+          <Home className="h-6 w-6" strokeWidth={isHome ? 2.5 : 2} />
           <span>Home</span>
         </NavLink>
 
         <NavLink to="/zoeken" className={tabClass(isSearch)}>
-          {isSearch && <span className="absolute top-0 h-0.5 w-8 rounded-full bg-primary" />}
-          <Search className="h-5 w-5" strokeWidth={isSearch ? 2.5 : 2} />
+          {isSearch && <span className="absolute top-0 h-1 w-10 rounded-b-full bg-primary" />}
+          <Search className="h-6 w-6" strokeWidth={isSearch ? 2.5 : 2} />
           <span>Zoeken</span>
         </NavLink>
 
@@ -70,17 +70,17 @@ export const BottomTabBar = () => {
           className="flex-1 flex justify-center"
           aria-label="Plaats fiets"
         >
-          <span className="-mt-7 grid h-14 w-14 place-items-center rounded-2xl bg-gradient-indigo text-primary-foreground shadow-elevated ring-4 ring-header active:scale-95 transition-transform">
-            <Plus className="h-7 w-7" strokeWidth={2.5} />
+          <span className="-mt-8 grid h-16 w-16 place-items-center rounded-2xl bg-gradient-indigo text-primary-foreground shadow-elevated ring-4 ring-header active:scale-95 transition-transform">
+            <Plus className="h-8 w-8" strokeWidth={2.5} />
           </span>
         </NavLink>
 
         <NavLink to={user ? "/berichten" : "/inloggen"} className={tabClass(isMessages)}>
-          {isMessages && <span className="absolute top-0 h-0.5 w-8 rounded-full bg-primary" />}
+          {isMessages && <span className="absolute top-0 h-1 w-10 rounded-b-full bg-primary" />}
           <span className="relative">
-            <MessageSquare className="h-5 w-5" strokeWidth={isMessages ? 2.5 : 2} />
+            <MessageSquare className="h-6 w-6" strokeWidth={isMessages ? 2.5 : 2} />
             {unread > 0 && (
-              <span className="absolute -top-1.5 -right-2 grid min-w-4 h-4 px-1 place-items-center rounded-full bg-primary text-primary-foreground text-[9px] font-bold ring-2 ring-header">
+              <span className="absolute -top-1.5 -right-2 grid min-w-[18px] h-[18px] px-1 place-items-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold ring-2 ring-header">
                 {unread > 9 ? "9+" : unread}
               </span>
             )}
@@ -89,11 +89,11 @@ export const BottomTabBar = () => {
         </NavLink>
 
         <NavLink to="/favorieten" className={tabClass(isFavs)}>
-          {isFavs && <span className="absolute top-0 h-0.5 w-8 rounded-full bg-primary" />}
+          {isFavs && <span className="absolute top-0 h-1 w-10 rounded-b-full bg-primary" />}
           <span className="relative">
-            <Heart className="h-5 w-5" strokeWidth={isFavs ? 2.5 : 2} />
+            <Heart className="h-6 w-6" strokeWidth={isFavs ? 2.5 : 2} />
             {favCount > 0 && (
-              <span className="absolute -top-1.5 -right-2 grid min-w-4 h-4 px-1 place-items-center rounded-full bg-primary text-primary-foreground text-[9px] font-bold ring-2 ring-header">
+              <span className="absolute -top-1.5 -right-2 grid min-w-[18px] h-[18px] px-1 place-items-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold ring-2 ring-header">
                 {favCount > 9 ? "9+" : favCount}
               </span>
             )}
