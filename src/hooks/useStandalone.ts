@@ -1,22 +1,29 @@
+import { Capacitor } from "@capacitor/core";
 import { useEffect, useState } from "react";
 
 /**
- * Detects if the app is running as an installed PWA (standalone display mode).
- * Returns true when launched from home-screen icon on iOS/Android, or as
- * an installed Chrome/Edge desktop PWA.
+ * Detects if the app is running either as an installed PWA or inside a
+ * Capacitor native shell.
  */
+const getIsStandalone = (): boolean => {
+  if (typeof window === "undefined") return false;
+
+  const nativeApp = Capacitor.isNativePlatform();
+  const mql = window.matchMedia?.("(display-mode: standalone)").matches;
+  const iosStandalone = (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
+
+  return Boolean(nativeApp || mql || iosStandalone);
+};
+
 export const useStandalone = (): boolean => {
-  const [standalone, setStandalone] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    const mql = window.matchMedia?.("(display-mode: standalone)").matches;
-    const iosStandalone = (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
-    return Boolean(mql || iosStandalone);
-  });
+  const [standalone, setStandalone] = useState<boolean>(() => getIsStandalone());
 
   useEffect(() => {
+    setStandalone(getIsStandalone());
+
     const mql = window.matchMedia?.("(display-mode: standalone)");
     if (!mql) return;
-    const handler = (e: MediaQueryListEvent) => setStandalone(e.matches);
+    const handler = () => setStandalone(getIsStandalone());
     mql.addEventListener?.("change", handler);
     return () => mql.removeEventListener?.("change", handler);
   }, []);
